@@ -9,23 +9,38 @@ import {
   Alert,
   Link,
   Avatar,
+  Grid,
   InputAdornment,
   IconButton,
   Fade,
 } from '@mui/material';
 import {
-  LockOutlined as LockOutlinedIcon,
+  PersonAddOutlined as PersonAddOutlinedIcon,
   Visibility,
   VisibilityOff,
 } from '@mui/icons-material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
-const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+const Register = () => {
+  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    password_confirmation: '',
+    phone: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -33,24 +48,35 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/login', {
+      // Trim email before sending
+      const submissionData = {
+        ...formData,
+        email: formData.email.trim(),
+      };
+
+      const response = await fetch('/api/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
         },
-        body: JSON.stringify({ email: email.trim(), password }),
+        body: JSON.stringify(submissionData),
       });
 
+      // Safely parse JSON
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
+        if (data.errors) {
+          const firstError = Object.values(data.errors)[0][0];
+          throw new Error(firstError);
+        }
+        throw new Error(data.message || 'Registration failed');
       }
 
-      console.log('Login successful:', data);
-      localStorage.setItem('token', data.token);
-      alert('Login successful!');
+      console.log('Registration successful:', data);
+      alert('Registration successful! Please sign in.');
+      navigate('/login');
     } catch (err) {
       setError(err.message);
     } finally {
@@ -94,16 +120,16 @@ const Login = () => {
                 boxShadow: '0 4px 12px rgba(25, 118, 210, 0.2)'
               }}
             >
-              <LockOutlinedIcon fontSize="large" />
+              <PersonAddOutlinedIcon fontSize="large" />
             </Avatar>
             
             <Typography component="h1" variant="h4" fontWeight="700" color="text.primary" gutterBottom>
-              Welcome back
+              Create account
             </Typography>
             <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 4 }}>
-              Sign in to manage your appointments and health records
+              Sign up to book appointments and manage your medical visits
             </Typography>
-            
+
             {error && (
               <Fade in={!!error}>
                 <Alert 
@@ -123,13 +149,34 @@ const Login = () => {
               <TextField
                 required
                 fullWidth
+                id="name"
+                label="Full Name"
+                name="name"
+                autoComplete="name"
+                autoFocus
+                value={formData.name}
+                onChange={handleChange}
+                sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              />
+              <TextField
+                required
+                fullWidth
                 id="email"
                 label="Email Address"
                 name="email"
                 autoComplete="email"
-                autoFocus
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={formData.email}
+                onChange={handleChange}
+                sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              />
+              <TextField
+                fullWidth
+                id="phone"
+                label="Phone Number"
+                name="phone"
+                autoComplete="tel"
+                value={formData.phone}
+                onChange={handleChange}
                 sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               />
               <TextField
@@ -139,9 +186,9 @@ const Login = () => {
                 label="Password"
                 type={showPassword ? 'text' : 'password'}
                 id="password"
-                autoComplete="current-password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                autoComplete="new-password"
+                value={formData.password}
+                onChange={handleChange}
                 InputProps={{
                   endAdornment: (
                     <InputAdornment position="end">
@@ -155,7 +202,19 @@ const Login = () => {
                     </InputAdornment>
                   ),
                 }}
-                sx={{ '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+                sx={{ mb: 2, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
+              />
+              <TextField
+                required
+                fullWidth
+                name="password_confirmation"
+                label="Confirm Password"
+                type="password"
+                id="password_confirmation"
+                autoComplete="new-password"
+                value={formData.password_confirmation}
+                onChange={handleChange}
+                sx={{ mb: 1, '& .MuiOutlinedInput-root': { borderRadius: 2 } }}
               />
               <Button
                 type="submit"
@@ -173,14 +232,14 @@ const Login = () => {
                   boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
                 }}
               >
-                {loading ? 'Signing In...' : 'Sign In'}
+                {loading ? 'Creating Account...' : 'Sign Up'}
               </Button>
               <Box sx={{ textAlign: 'center', mt: 1 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Don't have an account?{' '}
+                  Already have an account?{' '}
                   <Link 
                     component={RouterLink} 
-                    to="/register" 
+                    to="/login" 
                     variant="subtitle2"
                     sx={{ 
                       fontWeight: 'bold',
@@ -188,7 +247,7 @@ const Login = () => {
                       '&:hover': { textDecoration: 'underline' }
                     }}
                   >
-                    Sign Up
+                    Sign In
                   </Link>
                 </Typography>
               </Box>
@@ -200,4 +259,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Register;

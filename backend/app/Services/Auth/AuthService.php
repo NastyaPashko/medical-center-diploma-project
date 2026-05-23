@@ -1,12 +1,11 @@
 <?php
-namespace App\Services;
+namespace App\Services\Auth;
 
 use App\Models\Role;
 use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class AuthService
 {
@@ -25,7 +24,7 @@ class AuthService
         $user = $this->userRepository->create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => $data['password'], // Hash::make is handled by Model casting in User.php
+            'password' => $data['password'],
             'role_id' => $patientRole->id,
             'phone' => $data['phone'] ?? null,
         ]);
@@ -62,7 +61,7 @@ class AuthService
 
     public function getCurrentUser(User $user): User
     {
-        return $user->load('role');
+        return $user->loadMissing('role');
     }
 
     public function logout(User $user): void

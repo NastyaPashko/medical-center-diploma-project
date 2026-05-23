@@ -54,8 +54,7 @@ const Register = () => {
         email: formData.email.trim(),
       };
 
-      const response = await authApi.register(submissionData);
-      const data = response.data;
+      const data = await authApi.register(submissionData);
 
       console.log('Registration successful:', data);
       alert('Registration successful! Please sign in.');

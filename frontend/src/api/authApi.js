@@ -1,13 +1,25 @@
 import axiosClient from './axiosClient';
 
 const authApi = {
-  login: (payload) => axiosClient.post('/login', payload),
+  login: async (payload) => {
+    const response = await axiosClient.post('/login', payload);
+    return response.data;
+  },
   
-  register: (payload) => axiosClient.post('/register', payload),
+  register: async (payload) => {
+    const response = await axiosClient.post('/register', payload);
+    return response.data;
+  },
   
-  logout: () => axiosClient.post('/logout'),
+  logout: async () => {
+    const response = await axiosClient.post('/logout');
+    return response.data;
+  },
   
-  getCurrentUser: () => axiosClient.get('/user'),
+  getCurrentUser: async () => {
+    const response = await axiosClient.get('/user');
+    return response.data;
+  },
 };
 
 export default authApi;

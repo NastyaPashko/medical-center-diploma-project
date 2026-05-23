@@ -34,12 +34,10 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await authApi.login({
+      const data = await authApi.login({
         email: email.trim(),
         password,
       });
-
-      const data = response.data;
 
       console.log('Login successful:', data);
       localStorage.setItem('token', data.token);

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreign('role_id')
                 ->references('id')
                 ->on('roles')
-                ->cascadeOnDelete();
+                ->restrictOnDelete();
             $table->string('avatar')->nullable()->after('role_id');
         });
     }

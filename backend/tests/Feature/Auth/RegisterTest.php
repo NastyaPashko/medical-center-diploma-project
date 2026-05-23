@@ -16,8 +16,8 @@ class RegisterTest extends TestCase
         $this->seed(\RoleSeeder::class);
 
         $response = $this->postJson('/api/register', [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
+            'name' => 'Stacy Doe',
+            'email' => 'stacy@example.com',
             'password' => 'password123',
             'password_confirmation' => 'password123',
             'phone' => '123456789',
@@ -31,7 +31,7 @@ class RegisterTest extends TestCase
                 'token',
             ]);
 
-        $user = User::where('email', 'john@example.com')->first();
+        $user = User::where('email', 'stacy@example.com')->first();
         $this->assertNotNull($user);
 
         $patientRole = Role::where('name', Role::PATIENT)->first();
@@ -49,8 +49,8 @@ class RegisterTest extends TestCase
     public function test_registration_password_confirmation()
     {
         $response = $this->postJson('/api/register', [
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
+            'name' => 'Stacy Doe',
+            'email' => 'stacy@example.com',
             'password' => 'password123',
             'password_confirmation' => 'wrong_password',
         ]);

@@ -12,14 +12,10 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $roles = [
-            \App\Models\Role::ADMIN,
-            \App\Models\Role::DOCTOR,
-            \App\Models\Role::PATIENT,
-        ];
+        $roles = config('roles.list', []);
 
-        foreach ($roles as $role) {
-            \App\Models\Role::firstOrCreate(['name' => $role]);
+        foreach ($roles as $roleName) {
+            \App\Models\Role::firstOrCreate(['name' => $roleName]);
         }
     }
 }

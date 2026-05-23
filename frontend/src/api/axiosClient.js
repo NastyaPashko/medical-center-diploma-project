@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const api = axios.create({
+const axiosClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL || '/api',
   headers: {
     'Content-Type': 'application/json',
@@ -9,7 +9,7 @@ const api = axios.create({
 });
 
 // Add a request interceptor to add the auth token to every request
-api.interceptors.request.use(
+axiosClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -23,7 +23,7 @@ api.interceptors.request.use(
 );
 
 // Add a response interceptor to handle common errors (like 401)
-api.interceptors.response.use(
+axiosClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response && error.response.status === 401) {
@@ -37,4 +37,4 @@ api.interceptors.response.use(
   }
 );
 
-export default api;
+export default axiosClient;

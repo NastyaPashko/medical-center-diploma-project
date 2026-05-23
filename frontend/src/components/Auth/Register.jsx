@@ -20,7 +20,7 @@ import {
   VisibilityOff,
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import api from '../../api/axios';
+import authApi from '../../api/authApi';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -54,7 +54,7 @@ const Register = () => {
         email: formData.email.trim(),
       };
 
-      const response = await api.post('/register', submissionData);
+      const response = await authApi.register(submissionData);
       const data = response.data;
 
       console.log('Registration successful:', data);

@@ -19,7 +19,7 @@ import {
   VisibilityOff,
 } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
-import api from '../../api/axios';
+import authApi from '../../api/authApi';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -34,7 +34,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await api.post('/login', {
+      const response = await authApi.login({
         email: email.trim(),
         password,
       });

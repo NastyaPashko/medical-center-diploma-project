@@ -59,4 +59,14 @@ class AuthService
             'token' => $token,
         ];
     }
+
+    public function getCurrentUser(User $user): User
+    {
+        return $user->load('role');
+    }
+
+    public function logout(User $user): void
+    {
+        $user->currentAccessToken()->delete();
+    }
 }

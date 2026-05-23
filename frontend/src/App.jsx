@@ -1,10 +1,43 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
-import { CssBaseline, ThemeProvider, createTheme, Box, Typography } from '@mui/material';
+import { CssBaseline, ThemeProvider, createTheme } from '@mui/material';
 import { AuthProvider } from './context/AuthContext';
-import DashboardLayout from './components/layout/DashboardLayout';
 import './App.css';
+
+// Patient Pages
+import {
+  PatientDashboardPage,
+  PatientProfilePage,
+  PatientServicesPage,
+  PatientDoctorsPage,
+  PatientSymptomsPage,
+  PatientAppointmentsPage,
+  PatientPaymentsPage
+} from './pages/patient';
+
+// Doctor Pages
+import {
+  DoctorDashboardPage,
+  DoctorProfilePage,
+  DoctorSchedulePage,
+  DoctorAppointmentsPage,
+  DoctorPatientNotesPage
+} from './pages/doctor';
+
+// Admin Pages
+import {
+  AdminDashboardPage,
+  AdminDoctorsPage,
+  AdminPatientsPage,
+  AdminDepartmentsPage,
+  AdminSpecializationsPage,
+  AdminServicesPage,
+  AdminSchedulesPage,
+  AdminAppointmentsPage,
+  AdminPaymentsPage,
+  AdminStatisticsPage
+} from './pages/admin';
 
 const theme = createTheme({
   palette: {
@@ -47,14 +80,6 @@ const theme = createTheme({
   },
 });
 
-// Temporary placeholder for dashboard content
-const Placeholder = ({ title }) => (
-  <Box sx={{ p: 3 }}>
-    <Typography variant="h4" gutterBottom>{title}</Typography>
-    <Typography variant="body1">Content for {title} will be implemented soon.</Typography>
-  </Box>
-);
-
 function App() {
   return (
     <ThemeProvider theme={theme}>
@@ -67,31 +92,32 @@ function App() {
               <Route path="/register" element={<Register />} />
               
               {/* Patient Routes */}
-              <Route path="/patient/dashboard" element={<DashboardLayout><Placeholder title="Patient Dashboard" /></DashboardLayout>} />
-              <Route path="/patient/profile" element={<DashboardLayout><Placeholder title="Patient Profile" /></DashboardLayout>} />
-              <Route path="/patient/services" element={<DashboardLayout><Placeholder title="Medical Services" /></DashboardLayout>} />
-              <Route path="/patient/doctors" element={<DashboardLayout><Placeholder title="Find Doctors" /></DashboardLayout>} />
-              <Route path="/patient/symptoms" element={<DashboardLayout><Placeholder title="Symptom Checker" /></DashboardLayout>} />
-              <Route path="/patient/appointments" element={<DashboardLayout><Placeholder title="My Appointments" /></DashboardLayout>} />
-              <Route path="/patient/payments" element={<DashboardLayout><Placeholder title="Payments & Invoices" /></DashboardLayout>} />
+              <Route path="/patient/dashboard" element={<PatientDashboardPage />} />
+              <Route path="/patient/profile" element={<PatientProfilePage />} />
+              <Route path="/patient/services" element={<PatientServicesPage />} />
+              <Route path="/patient/doctors" element={<PatientDoctorsPage />} />
+              <Route path="/patient/symptoms" element={<PatientSymptomsPage />} />
+              <Route path="/patient/appointments" element={<PatientAppointmentsPage />} />
+              <Route path="/patient/payments" element={<PatientPaymentsPage />} />
 
               {/* Doctor Routes */}
-              <Route path="/doctor/dashboard" element={<DashboardLayout><Placeholder title="Doctor Dashboard" /></DashboardLayout>} />
-              <Route path="/doctor/profile" element={<DashboardLayout><Placeholder title="Doctor Profile" /></DashboardLayout>} />
-              <Route path="/doctor/schedule" element={<DashboardLayout><Placeholder title="My Schedule" /></DashboardLayout>} />
-              <Route path="/doctor/appointments" element={<DashboardLayout><Placeholder title="Appointments" /></DashboardLayout>} />
-              <Route path="/doctor/patient-notes" element={<DashboardLayout><Placeholder title="Patient Notes" /></DashboardLayout>} />
+              <Route path="/doctor/dashboard" element={<DoctorDashboardPage />} />
+              <Route path="/doctor/profile" element={<DoctorProfilePage />} />
+              <Route path="/doctor/schedule" element={<DoctorSchedulePage />} />
+              <Route path="/doctor/appointments" element={<DoctorAppointmentsPage />} />
+              <Route path="/doctor/patient-notes" element={<DoctorPatientNotesPage />} />
 
               {/* Admin Routes */}
-              <Route path="/admin/dashboard" element={<DashboardLayout><Placeholder title="Admin Dashboard" /></DashboardLayout>} />
-              <Route path="/admin/doctors" element={<DashboardLayout><Placeholder title="Manage Doctors" /></DashboardLayout>} />
-              <Route path="/admin/patients" element={<DashboardLayout><Placeholder title="Manage Patients" /></DashboardLayout>} />
-              <Route path="/admin/specializations" element={<DashboardLayout><Placeholder title="Manage Specializations" /></DashboardLayout>} />
-              <Route path="/admin/services" element={<DashboardLayout><Placeholder title="Manage Services" /></DashboardLayout>} />
-              <Route path="/admin/schedules" element={<DashboardLayout><Placeholder title="Manage Schedules" /></DashboardLayout>} />
-              <Route path="/admin/appointments" element={<DashboardLayout><Placeholder title="Manage Appointments" /></DashboardLayout>} />
-              <Route path="/admin/payments" element={<DashboardLayout><Placeholder title="Manage Payments" /></DashboardLayout>} />
-              <Route path="/admin/statistics" element={<DashboardLayout><Placeholder title="System Statistics" /></DashboardLayout>} />
+              <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
+              <Route path="/admin/doctors" element={<AdminDoctorsPage />} />
+              <Route path="/admin/patients" element={<AdminPatientsPage />} />
+              <Route path="/admin/departments" element={<AdminDepartmentsPage />} />
+              <Route path="/admin/specializations" element={<AdminSpecializationsPage />} />
+              <Route path="/admin/services" element={<AdminServicesPage />} />
+              <Route path="/admin/schedules" element={<AdminSchedulesPage />} />
+              <Route path="/admin/appointments" element={<AdminAppointmentsPage />} />
+              <Route path="/admin/payments" element={<AdminPaymentsPage />} />
+              <Route path="/admin/statistics" element={<AdminStatisticsPage />} />
 
               <Route path="/" element={<Navigate to="/login" replace />} />
             </Routes>

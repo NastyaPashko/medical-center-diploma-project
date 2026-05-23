@@ -20,10 +20,11 @@ import {
   VisibilityOff,
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-import authApi from '../../api/authApi';
+import { useAuth } from '../../context/AuthContext';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { register } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -54,11 +55,11 @@ const Register = () => {
         email: formData.email.trim(),
       };
 
-      const data = await authApi.register(submissionData);
+      const data = await register(submissionData);
 
       console.log('Registration successful:', data);
-      alert('Registration successful! Please sign in.');
-      navigate('/login');
+      alert('Registration successful! Redirecting to dashboard...');
+      navigate('/patient/dashboard');
     } catch (err) {
       if (err.response?.data?.errors) {
         const firstError = Object.values(err.response.data.errors)[0][0];

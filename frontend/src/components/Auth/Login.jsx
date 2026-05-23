@@ -18,10 +18,12 @@ import {
   Visibility,
   VisibilityOff,
 } from '@mui/icons-material';
-import { Link as RouterLink } from 'react-router-dom';
-import authApi from '../../api/authApi';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const Login = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -34,14 +36,16 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const data = await authApi.login({
+      const data = await login({
         email: email.trim(),
         password,
       });
 
       console.log('Login successful:', data);
-      localStorage.setItem('token', data.token);
-      alert('Login successful!');
+      
+      // Redirect based on role
+      const role = data.user.role?.toLowerCase() || 'patient';
+      navigate(`/${role}/dashboard`);
     } catch (err) {
       const errorMessage = err.response?.data?.message || err.message || 'Login failed';
       setError(errorMessage);

@@ -15,7 +15,7 @@ services:
     image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: laravel
+      MYSQL_DATABASE: medical_center
     ports:
       - "3307:3306"
 

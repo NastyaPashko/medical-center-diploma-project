@@ -19,6 +19,7 @@ import {
   VisibilityOff,
 } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
+import api from '../../api/axios';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -33,26 +34,19 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify({ email: email.trim(), password }),
+      const response = await api.post('/login', {
+        email: email.trim(),
+        password,
       });
 
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
+      const data = response.data;
 
       console.log('Login successful:', data);
       localStorage.setItem('token', data.token);
       alert('Login successful!');
     } catch (err) {
-      setError(err.message);
+      const errorMessage = err.response?.data?.message || err.message || 'Login failed';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }

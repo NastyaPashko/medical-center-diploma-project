@@ -20,6 +20,7 @@ import {
   VisibilityOff,
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import api from '../../api/axios';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -48,37 +49,24 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // Trim email before sending
       const submissionData = {
         ...formData,
         email: formData.email.trim(),
       };
 
-      const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-        body: JSON.stringify(submissionData),
-      });
-
-      // Safely parse JSON
-      const data = await response.json().catch(() => ({}));
-
-      if (!response.ok) {
-        if (data.errors) {
-          const firstError = Object.values(data.errors)[0][0];
-          throw new Error(firstError);
-        }
-        throw new Error(data.message || 'Registration failed');
-      }
+      const response = await api.post('/register', submissionData);
+      const data = response.data;
 
       console.log('Registration successful:', data);
       alert('Registration successful! Please sign in.');
       navigate('/login');
     } catch (err) {
-      setError(err.message);
+      if (err.response?.data?.errors) {
+        const firstError = Object.values(err.response.data.errors)[0][0];
+        setError(firstError);
+      } else {
+        setError(err.response?.data?.message || err.message || 'Registration failed');
+      }
     } finally {
       setLoading(false);
     }

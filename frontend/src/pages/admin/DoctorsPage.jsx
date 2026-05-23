@@ -1,0 +1,402 @@
+import React, { useState, useEffect } from 'react';
+import {
+  Box,
+  Typography,
+  Paper,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  FormControlLabel,
+  Switch,
+  Alert,
+  CircularProgress,
+  Tooltip,
+  MenuItem,
+  Select,
+  FormControl,
+  InputLabel,
+  InputAdornment,
+  Grid,
+} from '@mui/material';
+import {
+  Add as AddIcon,
+  Edit as EditIcon,
+  Delete as DeleteIcon,
+  Refresh as RefreshIcon,
+} from '@mui/icons-material';
+import adminApi from '../../api/adminApi';
+
+const AdminDoctorsPage = () => {
+  const [doctors, setDoctors] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [specializations, setSpecializations] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [open, setOpen] = useState(false);
+  const [editingDoctor, setEditingDoctor] = useState(null);
+  const [formData, setFormData] = useState({
+    user_id: '',
+    department_id: '',
+    specialization_id: '',
+    bio: '',
+    experience_years: '',
+    education: '',
+    office_number: '',
+    consultation_price: '',
+    is_available: true,
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const [docRes, deptRes, specRes] = await Promise.all([
+        adminApi.getDoctors(),
+        adminApi.getDepartments(),
+        adminApi.getSpecializations(),
+      ]);
+      setDoctors(docRes.data || []);
+      setDepartments(deptRes.data || []);
+      setSpecializations(specRes.data || []);
+      setError(null);
+    } catch (err) {
+      setError('Failed to fetch data');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const handleOpen = (doctor = null) => {
+    if (doctor) {
+      setEditingDoctor(doctor);
+      setFormData({
+        user_id: doctor.user_id,
+        department_id: doctor.department_id,
+        specialization_id: doctor.specialization_id,
+        bio: doctor.bio || '',
+        experience_years: doctor.experience_years || '',
+        education: doctor.education || '',
+        office_number: doctor.office_number || '',
+        consultation_price: doctor.consultation_price,
+        is_available: !!doctor.is_available,
+      });
+    } else {
+      setEditingDoctor(null);
+      setFormData({
+        user_id: '',
+        department_id: departments.length > 0 ? departments[0].id : '',
+        specialization_id: '',
+        bio: '',
+        experience_years: '',
+        education: '',
+        office_number: '',
+        consultation_price: '',
+        is_available: true,
+      });
+    }
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setEditingDoctor(null);
+  };
+
+  const handleChange = (e) => {
+    const { name, value, checked, type } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSubmitting(true);
+    try {
+      if (editingDoctor) {
+        await adminApi.updateDoctor(editingDoctor.id, formData);
+      } else {
+        // In a real app, we'd need a user list to pick from
+        // For now, assuming we're editing existing profiles or the API handles it
+        await adminApi.createDoctor(formData);
+      }
+      handleClose();
+      fetchData();
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to save doctor profile');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this doctor profile?')) {
+      try {
+        await adminApi.deleteDoctor(id);
+        fetchData();
+      } catch {
+        setError('Failed to delete doctor profile');
+      }
+    }
+  };
+
+  const filteredSpecializations = specializations.filter(
+    (spec) => spec.department_id === formData.department_id
+  );
+
+  return (
+    <Box sx={{ py: 3 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
+        <Typography variant="h4" fontWeight="700" color="text.primary">
+          Manage Doctors
+        </Typography>
+        <Box>
+          <IconButton onClick={fetchData} sx={{ mr: 1 }}>
+            <RefreshIcon />
+          </IconButton>
+          {/* Note: In a complete implementation, adding a doctor would involve picking a User first */}
+        </Box>
+      </Box>
+
+      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+
+      <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+        <Table>
+          <TableHead sx={{ bgcolor: 'grey.50' }}>
+            <TableRow>
+              <TableCell fontWeight="bold">Doctor</TableCell>
+              <TableCell>Specialization</TableCell>
+              <TableCell>Experience</TableCell>
+              <TableCell>Consultation</TableCell>
+              <TableCell>Availability</TableCell>
+              <TableCell align="right">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loading ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                  <CircularProgress size={24} />
+                </TableCell>
+              </TableRow>
+            ) : doctors.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                  No doctors found.
+                </TableCell>
+              </TableRow>
+            ) : (
+              doctors.map((doctor) => (
+                <TableRow key={doctor.id}>
+                  <TableCell>
+                    <Typography variant="body2" fontWeight="bold">
+                      {doctor.user?.name}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      {doctor.user?.email}
+                    </Typography>
+                  </TableCell>
+                  <TableCell>
+                    <Typography variant="body2">{doctor.specialization?.name || 'N/A'}</Typography>
+                    <Typography variant="caption" color="text.secondary">{doctor.department?.name}</Typography>
+                  </TableCell>
+                  <TableCell>{doctor.experience_years} years</TableCell>
+                  <TableCell>${doctor.consultation_price}</TableCell>
+                  <TableCell>
+                    <Alert 
+                      severity={doctor.is_available ? "success" : "warning"} 
+                      icon={false}
+                      sx={{ py: 0, px: 1, display: 'inline-flex' }}
+                    >
+                      {doctor.is_available ? 'Available' : 'Unavailable'}
+                    </Alert>
+                  </TableCell>
+                  <TableCell align="right">
+                    <Tooltip title="Edit">
+                      <IconButton onClick={() => handleOpen(doctor)} color="primary">
+                        <EditIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Tooltip title="Delete">
+                      <IconButton onClick={() => handleDelete(doctor.id)} color="error">
+                        <DeleteIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
+        <form onSubmit={handleSubmit}>
+          <DialogTitle>
+            {editingDoctor ? `Edit Profile: ${editingDoctor.user?.name}` : 'Create Doctor Profile'}
+          </DialogTitle>
+          <DialogContent dividers>
+            <Grid container spacing={2}>
+              {!editingDoctor && (
+                <Grid item xs={12}>
+                  <TextField
+                    name="user_id"
+                    label="User ID"
+                    fullWidth
+                    required
+                    type="number"
+                    margin="normal"
+                    helperText="Enter the ID of the user to assign as a doctor"
+                    value={formData.user_id}
+                    onChange={handleChange}
+                  />
+                </Grid>
+              )}
+              
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth margin="normal" required>
+                  <InputLabel>Department</InputLabel>
+                  <Select
+                    name="department_id"
+                    value={formData.department_id}
+                    onChange={handleChange}
+                    label="Department"
+                  >
+                    {departments.map((dept) => (
+                      <MenuItem key={dept.id} value={dept.id}>
+                        {dept.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <FormControl fullWidth margin="normal" required>
+                  <InputLabel>Specialization</InputLabel>
+                  <Select
+                    name="specialization_id"
+                    value={formData.specialization_id}
+                    onChange={handleChange}
+                    label="Specialization"
+                  >
+                    {filteredSpecializations.map((spec) => (
+                      <MenuItem key={spec.id} value={spec.id}>
+                        {spec.name}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  name="experience_years"
+                  label="Experience (years)"
+                  type="number"
+                  fullWidth
+                  margin="normal"
+                  value={formData.experience_years}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  name="consultation_price"
+                  label="Consultation Price"
+                  type="number"
+                  fullWidth
+                  required
+                  margin="normal"
+                  value={formData.consultation_price}
+                  onChange={handleChange}
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                  }}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  name="education"
+                  label="Education"
+                  fullWidth
+                  margin="normal"
+                  value={formData.education}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12} md={6}>
+                <TextField
+                  name="office_number"
+                  label="Office Number"
+                  fullWidth
+                  margin="normal"
+                  value={formData.office_number}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <TextField
+                  name="bio"
+                  label="Biography"
+                  fullWidth
+                  multiline
+                  rows={4}
+                  margin="normal"
+                  value={formData.bio}
+                  onChange={handleChange}
+                />
+              </Grid>
+
+              <Grid item xs={12}>
+                <FormControlLabel
+                  control={
+                    <Switch
+                      name="is_available"
+                      checked={formData.is_available}
+                      onChange={handleChange}
+                      color="primary"
+                    />
+                  }
+                  label="Is Available for Consultations"
+                />
+              </Grid>
+            </Grid>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose}>Cancel</Button>
+            <Button 
+              type="submit" 
+              variant="contained" 
+              disabled={submitting}
+            >
+              {submitting ? 'Saving...' : 'Save'}
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
+    </Box>
+  );
+};
+
+export default AdminDoctorsPage;

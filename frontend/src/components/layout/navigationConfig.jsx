@@ -33,10 +33,11 @@ export const navigationItemsByRole = {
   ],
   admin: [
     { text: 'Dashboard', path: '/admin/dashboard', icon: <DashboardIcon /> },
-    { text: 'Doctors', path: '/admin/doctors', icon: <DoctorIcon /> },
-    { text: 'Patients', path: '/admin/patients', icon: <PeopleIcon /> },
+    { text: 'Departments', path: '/admin/departments', icon: <ServicesIcon /> },
     { text: 'Specializations', path: '/admin/specializations', icon: <SpecializationIcon /> },
     { text: 'Services', path: '/admin/services', icon: <ServicesIcon /> },
+    { text: 'Doctors', path: '/admin/doctors', icon: <DoctorIcon /> },
+    { text: 'Patients', path: '/admin/patients', icon: <PeopleIcon /> },
     { text: 'Schedules', path: '/admin/schedules', icon: <ScheduleIcon /> },
     { text: 'Appointments', path: '/admin/appointments', icon: <AppointmentIcon /> },
     { text: 'Payments', path: '/admin/payments', icon: <PaymentIcon /> },

@@ -11,6 +11,11 @@ class PatientProfileRepository
         return PatientProfile::with('user')->get();
     }
 
+    public function findByUserId(int $userId): ?PatientProfile
+    {
+        return PatientProfile::with('user')->where('user_id', $userId)->first();
+    }
+
     public function findById(int $id): ?PatientProfile
     {
         return PatientProfile::with('user')->find($id);

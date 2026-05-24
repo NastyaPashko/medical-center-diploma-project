@@ -1,6 +1,16 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\AdminDepartmentController;
+use App\Http\Controllers\Api\Admin\AdminDoctorController;
+use App\Http\Controllers\Api\Admin\AdminMedicalServiceController;
+use App\Http\Controllers\Api\Admin\AdminPatientController;
+use App\Http\Controllers\Api\Admin\AdminSpecializationController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DepartmentController;
+use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\MedicalServiceController;
+use App\Http\Controllers\Api\Patient\PatientProfileController;
+use App\Http\Controllers\Api\SpecializationController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -10,30 +20,34 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'currentUser']);
     Route::post('/logout', [AuthController::class, 'logout']);
 
+    // Patient Profile
+    Route::get('/patient/profile', [PatientProfileController::class, 'show']);
+    Route::put('/patient/profile', [PatientProfileController::class, 'update']);
+
     // Admin Routes
     Route::middleware('admin')->prefix('admin')->group(function () {
         // Departments
-        Route::apiResource('departments', \App\Http\Controllers\Api\Admin\AdminDepartmentController::class);
+        Route::apiResource('departments', AdminDepartmentController::class);
 
         // Specializations
-        Route::apiResource('specializations', \App\Http\Controllers\Api\Admin\AdminSpecializationController::class);
+        Route::apiResource('specializations', AdminSpecializationController::class);
 
         // Medical Services
-        Route::apiResource('services', \App\Http\Controllers\Api\Admin\AdminMedicalServiceController::class);
+        Route::apiResource('services', AdminMedicalServiceController::class);
 
         // Doctors
-        Route::apiResource('doctors', \App\Http\Controllers\Api\Admin\AdminDoctorController::class);
+        Route::apiResource('doctors', AdminDoctorController::class);
 
         // Patients
-        Route::get('patients', [\App\Http\Controllers\Api\Admin\AdminPatientController::class, 'index']);
-        Route::get('patients/{id}', [\App\Http\Controllers\Api\Admin\AdminPatientController::class, 'show']);
-        Route::put('patients/{id}', [\App\Http\Controllers\Api\Admin\AdminPatientController::class, 'update']);
+        Route::get('patients', [AdminPatientController::class, 'index']);
+        Route::get('patients/{id}', [AdminPatientController::class, 'show']);
+        Route::put('patients/{id}', [AdminPatientController::class, 'update']);
     });
 });
 
 // Public/Patient Read-only Routes
-Route::get('/departments', [\App\Http\Controllers\Api\DepartmentController::class, 'index']);
-Route::get('/specializations', [\App\Http\Controllers\Api\SpecializationController::class, 'index']);
-Route::get('/medical-services', [\App\Http\Controllers\Api\MedicalServiceController::class, 'index']);
-Route::get('/doctors', [\App\Http\Controllers\Api\DoctorController::class, 'index']);
-Route::get('/doctors/{id}', [\App\Http\Controllers\Api\DoctorController::class, 'show']);
+Route::get('/departments', [DepartmentController::class, 'index']);
+Route::get('/specializations', [SpecializationController::class, 'index']);
+Route::get('/medical-services', [MedicalServiceController::class, 'index']);
+Route::get('/doctors', [DoctorController::class, 'index']);
+Route::get('/doctors/{id}', [DoctorController::class, 'show']);

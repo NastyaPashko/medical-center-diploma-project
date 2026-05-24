@@ -29,6 +29,17 @@ class AuthService
             'phone' => $data['phone'] ?? null,
         ]);
 
+        // Refresh user to ensure role relation is loaded for booted event if needed,
+        // though in Laravel created event, role_id is there, but role relation might not be.
+        // Actually, $user->role might be null if not eager loaded.
+        // Let's make sure it works.
+        if (!$user->patientProfile) {
+             $user->load('role');
+             if ($user->role->name === Role::PATIENT) {
+                 $user->patientProfile()->create();
+             }
+        }
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return [

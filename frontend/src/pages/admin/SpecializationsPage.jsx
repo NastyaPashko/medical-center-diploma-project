@@ -33,6 +33,7 @@ import {
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import adminApi from '../../api/adminApi';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 const AdminSpecializationsPage = () => {
   const [specializations, setSpecializations] = useState([]);
@@ -41,6 +42,8 @@ const AdminSpecializationsPage = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [editingSpec, setEditingSpec] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [specToDelete, setSpecToDelete] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -72,6 +75,7 @@ const AdminSpecializationsPage = () => {
   }, []);
 
   const handleOpen = (spec = null) => {
+    setError(null);
     if (spec) {
       setEditingSpec(spec);
       setFormData({
@@ -95,6 +99,7 @@ const AdminSpecializationsPage = () => {
   const handleClose = () => {
     setOpen(false);
     setEditingSpec(null);
+    setError(null);
   };
 
   const handleChange = (e) => {
@@ -123,14 +128,20 @@ const AdminSpecializationsPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to deactivate/delete this specialization?')) {
-      try {
-        await adminApi.deleteSpecialization(id);
-        fetchData();
-      } catch {
-        setError('Failed to delete specialization');
-      }
+  const handleDeleteClick = (id) => {
+    setSpecToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await adminApi.deleteSpecialization(specToDelete);
+      fetchData();
+      setConfirmOpen(false);
+      setSpecToDelete(null);
+    } catch {
+      setError('Failed to delete specialization');
+      setConfirmOpen(false);
     }
   };
 
@@ -155,7 +166,6 @@ const AdminSpecializationsPage = () => {
         </Box>
       </Box>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
       {departments.length === 0 && !loading && (
         <Alert severity="warning" sx={{ mb: 2 }}>
           You need to create at least one department before adding specializations.
@@ -208,7 +218,7 @@ const AdminSpecializationsPage = () => {
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete">
-                      <IconButton onClick={() => handleDelete(spec.id)} color="error">
+                      <IconButton onClick={() => handleDeleteClick(spec.id)} color="error">
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
@@ -226,6 +236,7 @@ const AdminSpecializationsPage = () => {
             {editingSpec ? 'Edit Specialization' : 'Add New Specialization'}
           </DialogTitle>
           <DialogContent dividers>
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <TextField
               name="name"
               label="Specialization Name"
@@ -287,6 +298,16 @@ const AdminSpecializationsPage = () => {
           </DialogActions>
         </form>
       </Dialog>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirm Deactivation"
+        message="Are you sure you want to deactivate/delete this specialization? This may affect linked services."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmOpen(false)}
+        confirmText="Deactivate"
+        confirmColor="error"
+      />
     </Box>
   );
 };

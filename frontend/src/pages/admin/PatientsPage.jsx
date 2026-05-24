@@ -66,6 +66,7 @@ const AdminPatientsPage = () => {
   }, []);
 
   const handleOpenEdit = (patient) => {
+    setError(null);
     setSelectedPatient(patient);
     setFormData({
       date_of_birth: patient.date_of_birth || '',
@@ -88,6 +89,7 @@ const AdminPatientsPage = () => {
     setOpen(false);
     setViewOpen(false);
     setSelectedPatient(null);
+    setError(null);
   };
 
   const handleChange = (e) => {
@@ -122,8 +124,6 @@ const AdminPatientsPage = () => {
           <RefreshIcon />
         </IconButton>
       </Box>
-
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <Table>
@@ -243,6 +243,7 @@ const AdminPatientsPage = () => {
         <form onSubmit={handleSubmit}>
           <DialogTitle>Edit Patient Profile</DialogTitle>
           <DialogContent dividers>
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField

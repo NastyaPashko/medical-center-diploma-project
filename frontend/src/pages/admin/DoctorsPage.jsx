@@ -35,6 +35,7 @@ import {
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import adminApi from '../../api/adminApi';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 const AdminDoctorsPage = () => {
   const [doctors, setDoctors] = useState([]);
@@ -44,6 +45,8 @@ const AdminDoctorsPage = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [editingDoctor, setEditingDoctor] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [doctorToDelete, setDoctorToDelete] = useState(null);
   const [formData, setFormData] = useState({
     user_id: '',
     department_id: '',
@@ -82,6 +85,7 @@ const AdminDoctorsPage = () => {
   }, []);
 
   const handleOpen = (doctor = null) => {
+    setError(null);
     if (doctor) {
       setEditingDoctor(doctor);
       setFormData({
@@ -115,6 +119,7 @@ const AdminDoctorsPage = () => {
   const handleClose = () => {
     setOpen(false);
     setEditingDoctor(null);
+    setError(null);
   };
 
   const handleChange = (e) => {
@@ -145,14 +150,20 @@ const AdminDoctorsPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this doctor profile?')) {
-      try {
-        await adminApi.deleteDoctor(id);
-        fetchData();
-      } catch {
-        setError('Failed to delete doctor profile');
-      }
+  const handleDeleteClick = (id) => {
+    setDoctorToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await adminApi.deleteDoctor(doctorToDelete);
+      fetchData();
+      setConfirmOpen(false);
+      setDoctorToDelete(null);
+    } catch {
+      setError('Failed to delete doctor profile');
+      setConfirmOpen(false);
     }
   };
 
@@ -173,8 +184,6 @@ const AdminDoctorsPage = () => {
           {/* Note: In a complete implementation, adding a doctor would involve picking a User first */}
         </Box>
       </Box>
-
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <Table>
@@ -234,7 +243,7 @@ const AdminDoctorsPage = () => {
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete">
-                      <IconButton onClick={() => handleDelete(doctor.id)} color="error">
+                      <IconButton onClick={() => handleDeleteClick(doctor.id)} color="error">
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
@@ -252,6 +261,7 @@ const AdminDoctorsPage = () => {
             {editingDoctor ? `Edit Profile: ${editingDoctor.user?.name}` : 'Create Doctor Profile'}
           </DialogTitle>
           <DialogContent dividers>
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <Grid container spacing={2}>
               {!editingDoctor && (
                 <Grid item xs={12}>
@@ -395,6 +405,16 @@ const AdminDoctorsPage = () => {
           </DialogActions>
         </form>
       </Dialog>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirm Deletion"
+        message="Are you sure you want to delete this doctor profile? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmOpen(false)}
+        confirmText="Delete"
+        confirmColor="error"
+      />
     </Box>
   );
 };

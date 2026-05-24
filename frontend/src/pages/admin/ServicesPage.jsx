@@ -34,6 +34,7 @@ import {
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import adminApi from '../../api/adminApi';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 const AdminServicesPage = () => {
   const [services, setServices] = useState([]);
@@ -43,6 +44,8 @@ const AdminServicesPage = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [editingService, setEditingService] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [serviceToDelete, setServiceToDelete] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -79,6 +82,7 @@ const AdminServicesPage = () => {
   }, []);
 
   const handleOpen = (service = null) => {
+    setError(null);
     if (service) {
       setEditingService(service);
       setFormData({
@@ -108,6 +112,7 @@ const AdminServicesPage = () => {
   const handleClose = () => {
     setOpen(false);
     setEditingService(null);
+    setError(null);
   };
 
   const handleChange = (e) => {
@@ -136,15 +141,20 @@ const AdminServicesPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to deactivate/delete this service?')) {
-      try {
-        await adminApi.deleteService(id);
-        fetchData();
-      } catch (err) {
-        setError('Failed to delete service');
-        console.error(err);
-      }
+  const handleDeleteClick = (id) => {
+    setServiceToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await adminApi.deleteService(serviceToDelete);
+      fetchData();
+      setConfirmOpen(false);
+      setServiceToDelete(null);
+    } catch {
+      setError('Failed to delete service');
+      setConfirmOpen(false);
     }
   };
 
@@ -172,8 +182,6 @@ const AdminServicesPage = () => {
           </Button>
         </Box>
       </Box>
-
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <Table>
@@ -229,7 +237,7 @@ const AdminServicesPage = () => {
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete">
-                      <IconButton onClick={() => handleDelete(service.id)} color="error">
+                      <IconButton onClick={() => handleDeleteClick(service.id)} color="error">
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
@@ -247,6 +255,7 @@ const AdminServicesPage = () => {
             {editingService ? 'Edit Service' : 'Add New Service'}
           </DialogTitle>
           <DialogContent dividers>
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <TextField
               name="name"
               label="Service Name"
@@ -353,6 +362,16 @@ const AdminServicesPage = () => {
           </DialogActions>
         </form>
       </Dialog>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirm Deactivation"
+        message="Are you sure you want to deactivate/delete this medical service?"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmOpen(false)}
+        confirmText="Deactivate"
+        confirmColor="error"
+      />
     </Box>
   );
 };

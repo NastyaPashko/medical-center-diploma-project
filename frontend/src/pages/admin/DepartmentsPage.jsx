@@ -29,6 +29,7 @@ import {
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import adminApi from '../../api/adminApi';
+import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 const AdminDepartmentsPage = () => {
   const [departments, setDepartments] = useState([]);
@@ -36,6 +37,8 @@ const AdminDepartmentsPage = () => {
   const [error, setError] = useState(null);
   const [open, setOpen] = useState(false);
   const [editingDept, setEditingDept] = useState(null);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deptToDelete, setDeptToDelete] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -65,6 +68,7 @@ const AdminDepartmentsPage = () => {
   }, []);
 
   const handleOpen = (dept = null) => {
+    setError(null);
     if (dept) {
       setEditingDept(dept);
       setFormData({
@@ -92,6 +96,7 @@ const AdminDepartmentsPage = () => {
   const handleClose = () => {
     setOpen(false);
     setEditingDept(null);
+    setError(null);
   };
 
   const handleChange = (e) => {
@@ -120,14 +125,20 @@ const AdminDepartmentsPage = () => {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to deactivate/delete this department?')) {
-      try {
-        await adminApi.deleteDepartment(id);
-        fetchDepartments();
-      } catch (err) {
-        setError('Failed to delete department');
-      }
+  const handleDeleteClick = (id) => {
+    setDeptToDelete(id);
+    setConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      await adminApi.deleteDepartment(deptToDelete);
+      fetchDepartments();
+      setConfirmOpen(false);
+      setDeptToDelete(null);
+    } catch {
+      setError('Failed to delete department');
+      setConfirmOpen(false);
     }
   };
 
@@ -150,8 +161,6 @@ const AdminDepartmentsPage = () => {
           </Button>
         </Box>
       </Box>
-
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
       <TableContainer component={Paper} sx={{ borderRadius: 3, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
         <Table>
@@ -205,7 +214,7 @@ const AdminDepartmentsPage = () => {
                       </IconButton>
                     </Tooltip>
                     <Tooltip title="Delete">
-                      <IconButton onClick={() => handleDelete(dept.id)} color="error">
+                      <IconButton onClick={() => handleDeleteClick(dept.id)} color="error">
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
@@ -223,6 +232,7 @@ const AdminDepartmentsPage = () => {
             {editingDept ? 'Edit Department' : 'Add New Department'}
           </DialogTitle>
           <DialogContent dividers>
+            {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <TextField
               name="name"
               label="Department Name"
@@ -293,6 +303,16 @@ const AdminDepartmentsPage = () => {
           </DialogActions>
         </form>
       </Dialog>
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Confirm Deactivation"
+        message="Are you sure you want to deactivate/delete this department? This may affect linked specializations and services."
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmOpen(false)}
+        confirmText="Deactivate"
+        confirmColor="error"
+      />
     </Box>
   );
 };

@@ -24,11 +24,15 @@ class AdminMedicalServiceController extends Controller
 
     public function store(StoreMedicalServiceRequest $request): JsonResponse
     {
-        $service = $this->medicalServiceService->createService($request->validated());
-        return response()->json([
-            'message' => 'Medical service created successfully',
-            'data' => new MedicalServiceResource($service)
-        ], 201);
+        try {
+            $service = $this->medicalServiceService->createService($request->validated());
+            return response()->json([
+                'message' => 'Medical service created successfully',
+                'data' => new MedicalServiceResource($service)
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     public function show(int $id): JsonResponse
@@ -51,7 +55,7 @@ class AdminMedicalServiceController extends Controller
                 'data' => new MedicalServiceResource($service)
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 
@@ -61,7 +65,7 @@ class AdminMedicalServiceController extends Controller
             $this->medicalServiceService->deleteService($id);
             return response()->json(['message' => 'Medical service deleted successfully']);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 }

@@ -23,6 +23,9 @@ class DepartmentService
 
     public function createDepartment(array $data): Department
     {
+        if (!isset($data['is_active'])) {
+            $data['is_active'] = true;
+        }
         return $this->departmentRepository->create($data);
     }
 
@@ -32,6 +35,11 @@ class DepartmentService
         if (!$department) {
             throw new \Exception('Department not found');
         }
+
+        // If deactivating department, we might want to deactivate its specializations/services too
+        // But the requirement says "Prefer deactivation" over "hard delete".
+        // Business rule: Cannot create specialization/service under inactive department.
+
         return $this->departmentRepository->update($department, $data);
     }
 
@@ -41,6 +49,12 @@ class DepartmentService
         if (!$department) {
             throw new \Exception('Department not found');
         }
+
+        // Prefer deactivation over hard delete if it has linked records
+        if ($department->specializations()->count() > 0 || $department->medicalServices()->count() > 0 || $department->doctorProfiles()->count() > 0) {
+            return $this->departmentRepository->update($department, ['is_active' => false])->is_active === false;
+        }
+
         return $this->departmentRepository->delete($department);
     }
 }

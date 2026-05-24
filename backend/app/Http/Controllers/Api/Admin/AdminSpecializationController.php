@@ -24,11 +24,15 @@ class AdminSpecializationController extends Controller
 
     public function store(StoreSpecializationRequest $request): JsonResponse
     {
-        $specialization = $this->specializationService->createSpecialization($request->validated());
-        return response()->json([
-            'message' => 'Specialization created successfully',
-            'data' => new SpecializationResource($specialization)
-        ], 201);
+        try {
+            $specialization = $this->specializationService->createSpecialization($request->validated());
+            return response()->json([
+                'message' => 'Specialization created successfully',
+                'data' => new SpecializationResource($specialization)
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     public function show(int $id): JsonResponse
@@ -51,7 +55,7 @@ class AdminSpecializationController extends Controller
                 'data' => new SpecializationResource($specialization)
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 
@@ -61,7 +65,7 @@ class AdminSpecializationController extends Controller
             $this->specializationService->deleteSpecialization($id);
             return response()->json(['message' => 'Specialization deleted successfully']);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 }

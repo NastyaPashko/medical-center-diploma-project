@@ -23,11 +23,15 @@ class AdminDepartmentController extends Controller
 
     public function store(StoreDepartmentRequest $request): JsonResponse
     {
-        $department = $this->departmentService->createDepartment($request->validated());
-        return response()->json([
-            'message' => 'Department created successfully',
-            'data' => new DepartmentResource($department)
-        ], 201);
+        try {
+            $department = $this->departmentService->createDepartment($request->validated());
+            return response()->json([
+                'message' => 'Department created successfully',
+                'data' => new DepartmentResource($department)
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
     }
 
     public function show(int $id): JsonResponse
@@ -50,7 +54,7 @@ class AdminDepartmentController extends Controller
                 'data' => new DepartmentResource($department)
             ]);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 
@@ -60,7 +64,7 @@ class AdminDepartmentController extends Controller
             $this->departmentService->deleteDepartment($id);
             return response()->json(['message' => 'Department deleted successfully']);
         } catch (\Exception $e) {
-            return response()->json(['message' => $e->getMessage()], 404);
+            return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 }

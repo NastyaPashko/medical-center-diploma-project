@@ -12,13 +12,27 @@ class StoreDepartmentRequest extends FormRequest
 
     public function rules(): array
     {
+        $id = $this->route('department') ?: $this->route('id');
         return [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'phone' => 'nullable|string|max:20',
-            'floor' => 'nullable|string|max:50',
-            'room_number' => 'nullable|string|max:50',
-            'is_active' => 'nullable|boolean',
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                'regex:/^(?!\s*$).+/', // not only spaces
+                'unique:departments,name' . ($id ? ",$id" : ''),
+            ],
+            'description' => 'nullable|string|max:1000',
+            'phone' => 'nullable|string|max:30',
+            'floor' => 'nullable|string|max:20',
+            'room_number' => 'nullable|string|max:20',
+            'is_active' => 'boolean',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.regex' => 'The name cannot consist only of spaces.',
         ];
     }
 }

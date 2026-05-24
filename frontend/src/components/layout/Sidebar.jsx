@@ -53,14 +53,14 @@ const Sidebar = ({
         {navigationItems.map((item) => {
           const isActive = location.pathname === item.path;
           return (
-            <ListItem key={item.text} disablePadding sx={{ mb: 1 }}>
+            <ListItem key={item.text} disablePadding sx={{ mb: 0.5 }}>
               <ListItemButton
                 component={RouterLink}
                 to={item.path}
                 onClick={isMobile ? onDrawerToggle : undefined}
                 sx={{
                   borderRadius: 2,
-                  py: 1.2,
+                  py: 1,
                   backgroundColor: isActive ? 'primary.light' : 'transparent',
                   color: isActive ? 'primary.main' : 'text.secondary',
                   '&:hover': {

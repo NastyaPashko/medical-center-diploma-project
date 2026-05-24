@@ -84,7 +84,7 @@ const DashboardLayout = ({ children }) => {
         }}
       >
         <Toolbar />
-        <Container maxWidth="xl" sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', p: 0 }}>
+        <Container maxWidth="lg" sx={{ flexGrow: 1, py: 4, display: 'flex', flexDirection: 'column' }}>
           {children}
         </Container>
       </Box>

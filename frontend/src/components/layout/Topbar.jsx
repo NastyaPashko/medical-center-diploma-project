@@ -18,10 +18,10 @@ const Topbar = ({ drawerWidth, onDrawerToggle, user, onMenuOpen, pageTitle }) =>
       sx={{
         width: { md: `calc(100% - ${drawerWidth}px)` },
         ml: { md: `${drawerWidth}px` },
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
-        backdropFilter: 'blur(8px)',
+        backgroundColor: '#fff',
         borderBottom: '1px solid',
         borderColor: 'divider',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.02)',
         color: 'text.primary',
       }}
     >

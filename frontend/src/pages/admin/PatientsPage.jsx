@@ -113,7 +113,7 @@ const AdminPatientsPage = () => {
   };
 
   return (
-    <Box sx={{ py: 3 }}>
+    <Box sx={{ py: 1 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" fontWeight="700" color="text.primary">
           Manage Patients

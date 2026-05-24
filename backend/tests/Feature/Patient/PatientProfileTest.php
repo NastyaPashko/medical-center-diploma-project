@@ -120,4 +120,33 @@ class PatientProfileTest extends TestCase
 
         $response->assertStatus(403);
     }
+
+    public function test_profile_validation_rules()
+    {
+        $user = User::factory()->create([
+            'role_id' => Role::where('name', Role::PATIENT)->first()->id
+        ]);
+        PatientProfile::create(['user_id' => $user->id]);
+
+        $response = $this->actingAs($user)->putJson('/api/patient/profile', [
+            'date_of_birth' => now()->addDay()->format('Y-m-d'), // future date
+            'gender' => 'invalid',
+            'address' => str_repeat('a', 256),
+            'emergency_contact_name' => str_repeat('a', 101),
+            'emergency_contact_phone' => str_repeat('1', 31),
+            'insurance_number' => str_repeat('i', 101),
+            'notes' => str_repeat('n', 1001),
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'date_of_birth',
+                'gender',
+                'address',
+                'emergency_contact_name',
+                'emergency_contact_phone',
+                'insurance_number',
+                'notes'
+            ]);
+    }
 }

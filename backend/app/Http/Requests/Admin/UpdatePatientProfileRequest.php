@@ -13,13 +13,13 @@ class UpdatePatientProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'date_of_birth' => 'nullable|date',
-            'gender' => 'nullable|string|max:20',
-            'address' => 'nullable|string',
-            'emergency_contact_name' => 'nullable|string|max:255',
-            'emergency_contact_phone' => 'nullable|string|max:20',
+            'date_of_birth' => 'nullable|date|before:today',
+            'gender' => 'nullable|in:male,female,other',
+            'address' => 'nullable|string|max:255',
+            'emergency_contact_name' => 'nullable|string|max:100',
+            'emergency_contact_phone' => 'nullable|string|max:30',
             'insurance_number' => 'nullable|string|max:100',
-            'notes' => 'nullable|string',
+            'notes' => 'nullable|string|max:1000',
         ];
     }
 }

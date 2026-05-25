@@ -26,7 +26,7 @@ class RegisterTest extends TestCase
         $response->assertStatus(201)
             ->assertJsonStructure([
                 'user' => [
-                    'id', 'name', 'email', 'role_id', 'created_at', 'updated_at'
+                    'id', 'name', 'email', 'role', 'avatar_url'
                 ],
                 'token',
             ]);
@@ -57,5 +57,27 @@ class RegisterTest extends TestCase
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['password']);
+    }
+
+    public function test_registration_fails_if_phone_already_exists()
+    {
+        $this->seed(\RoleSeeder::class);
+        $role = Role::where('name', Role::PATIENT)->first();
+
+        User::factory()->create([
+            'phone' => '123456789',
+            'role_id' => $role->id,
+        ]);
+
+        $response = $this->postJson('/api/register', [
+            'name' => 'John Doe',
+            'email' => 'john@example.com',
+            'password' => 'password123',
+            'password_confirmation' => 'password123',
+            'phone' => '123456789',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['phone']);
     }
 }

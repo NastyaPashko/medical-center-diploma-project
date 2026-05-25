@@ -26,7 +26,9 @@ import {
   Edit as EditIcon,
   Refresh as RefreshIcon,
   Visibility as ViewIcon,
+  PhotoCamera as PhotoCameraIcon,
 } from '@mui/icons-material';
+import { Avatar } from '@mui/material';
 import adminApi from '../../api/adminApi';
 
 const AdminPatientsPage = () => {
@@ -44,7 +46,10 @@ const AdminPatientsPage = () => {
     emergency_contact_phone: '',
     insurance_number: '',
     notes: '',
+    avatar: null,
   });
+  const fileInputRef = React.useRef(null);
+  const [previewUrl, setPreviewUrl] = useState('');
   const [submitting, setSubmitting] = useState(false);
 
   const fetchPatients = async () => {
@@ -76,7 +81,9 @@ const AdminPatientsPage = () => {
       emergency_contact_phone: patient.emergency_contact_phone || '',
       insurance_number: patient.insurance_number || '',
       notes: patient.notes || '',
+      avatar: null,
     });
+    setPreviewUrl(patient.avatar_url || '');
     setOpen(true);
   };
 
@@ -100,11 +107,31 @@ const AdminPatientsPage = () => {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, avatar: file }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      await adminApi.updatePatient(selectedPatient.id, formData);
+      const dataToSend = new FormData();
+      Object.keys(formData).forEach(key => {
+        if (formData[key] !== null) {
+          dataToSend.append(key, formData[key]);
+        }
+      });
+      dataToSend.append('_method', 'PUT');
+
+      await adminApi.updatePatient(selectedPatient.id, dataToSend);
       handleClose();
       fetchPatients();
     } catch (err) {
@@ -129,6 +156,7 @@ const AdminPatientsPage = () => {
         <Table>
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
+              <TableCell padding="checkbox" sx={{ pl: 2 }}></TableCell>
               <TableCell fontWeight="bold">Patient</TableCell>
               <TableCell>Insurance</TableCell>
               <TableCell>Gender</TableCell>
@@ -139,19 +167,27 @@ const AdminPatientsPage = () => {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
                   <CircularProgress size={24} />
                 </TableCell>
               </TableRow>
             ) : patients.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
                   No patients found.
                 </TableCell>
               </TableRow>
             ) : (
               patients.map((patient) => (
                 <TableRow key={patient.id}>
+                  <TableCell sx={{ pl: 2 }}>
+                    <Avatar 
+                      src={patient.avatar_url} 
+                      sx={{ width: 40, height: 40 }}
+                    >
+                      {patient.user?.name?.charAt(0).toUpperCase()}
+                    </Avatar>
+                  </TableCell>
                   <TableCell>
                     <Typography variant="body2" fontWeight="bold">
                       {patient.user?.name}
@@ -161,8 +197,10 @@ const AdminPatientsPage = () => {
                     </Typography>
                   </TableCell>
                   <TableCell>{patient.insurance_number || 'N/A'}</TableCell>
-                  <TableCell>{patient.gender || 'N/A'}</TableCell>
-                  <TableCell>{patient.date_of_birth || 'N/A'}</TableCell>
+                  <TableCell>{patient.gender ? (patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)) : 'N/A'}</TableCell>
+                  <TableCell>
+                    {patient.date_of_birth ? new Date(patient.date_of_birth).toLocaleDateString() : 'N/A'}
+                  </TableCell>
                   <TableCell align="right">
                     <Tooltip title="View Details">
                       <IconButton onClick={() => handleOpenView(patient)} color="info">
@@ -188,28 +226,35 @@ const AdminPatientsPage = () => {
         <DialogContent dividers>
           {selectedPatient && (
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Typography variant="subtitle2" color="text.secondary">Full Name</Typography>
-                <Typography variant="body1">{selectedPatient.user?.name}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" color="text.secondary">Email</Typography>
-                <Typography variant="body1">{selectedPatient.user?.email}</Typography>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography variant="subtitle2" color="text.secondary">Phone</Typography>
-                <Typography variant="body1">{selectedPatient.user?.phone || 'N/A'}</Typography>
+              <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', gap: 2, mb: 1 }}>
+                <Avatar 
+                  src={selectedPatient.avatar_url} 
+                  sx={{ width: 64, height: 64 }}
+                >
+                  {selectedPatient.user?.name?.charAt(0).toUpperCase()}
+                </Avatar>
+                <Box>
+                  <Typography variant="h6" sx={{ lineHeight: 1.2 }}>{selectedPatient.user?.name}</Typography>
+                  <Typography variant="body2" color="text.secondary">{selectedPatient.user?.email}</Typography>
+                </Box>
               </Grid>
               <Grid item xs={12}><Divider /></Grid>
               <Grid item xs={6}>
-                <Typography variant="subtitle2" color="text.secondary">Date of Birth</Typography>
-                <Typography variant="body1">{selectedPatient.date_of_birth || 'N/A'}</Typography>
+                <Typography variant="subtitle2" color="text.secondary">Phone</Typography>
+                <Typography variant="body1">{selectedPatient.user?.phone || 'N/A'}</Typography>
               </Grid>
               <Grid item xs={6}>
                 <Typography variant="subtitle2" color="text.secondary">Gender</Typography>
                 <Typography variant="body1">{selectedPatient.gender || 'N/A'}</Typography>
               </Grid>
-              <Grid item xs={12}>
+              <Grid item xs={12}><Divider /></Grid>
+              <Grid item xs={6}>
+                <Typography variant="subtitle2" color="text.secondary">Date of Birth</Typography>
+                <Typography variant="body1">
+                  {selectedPatient.date_of_birth ? new Date(selectedPatient.date_of_birth).toLocaleDateString() : 'N/A'}
+                </Typography>
+              </Grid>
+              <Grid item xs={6}>
                 <Typography variant="subtitle2" color="text.secondary">Insurance Number</Typography>
                 <Typography variant="body1">{selectedPatient.insurance_number || 'N/A'}</Typography>
               </Grid>
@@ -244,6 +289,39 @@ const AdminPatientsPage = () => {
           <DialogTitle>Edit Patient Profile</DialogTitle>
           <DialogContent dividers>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
+              <Box sx={{ position: 'relative' }}>
+                <Avatar
+                  src={previewUrl}
+                  sx={{ width: 80, height: 80, mb: 1, border: '1px solid', borderColor: 'divider' }}
+                />
+                <IconButton
+                  color="primary"
+                  size="small"
+                  onClick={() => fileInputRef.current.click()}
+                  sx={{
+                    position: 'absolute',
+                    bottom: 0,
+                    right: 0,
+                    backgroundColor: 'white',
+                    '&:hover': { backgroundColor: '#f5f5f5' },
+                    boxShadow: 1
+                  }}
+                >
+                  <PhotoCameraIcon fontSize="small" />
+                </IconButton>
+              </Box>
+              <input
+                type="file"
+                hidden
+                ref={fileInputRef}
+                onChange={handleFileChange}
+                accept="image/*"
+              />
+              <Typography variant="caption" color="text.secondary">
+                Patient Profile Photo
+              </Typography>
+            </Box>
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField

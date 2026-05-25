@@ -4,6 +4,7 @@ namespace App\Http\Resources\Medical;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class PatientResource extends JsonResource
 {
@@ -20,8 +21,9 @@ class PatientResource extends JsonResource
             'emergency_contact_phone' => $this->emergency_contact_phone,
             'insurance_number' => $this->insurance_number,
             'notes' => $this->notes,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'avatar_url' => $this->user && $this->user->avatar ? '/storage/' . $this->user->avatar : null,
+            'created_at' => $this->created_at ? $this->created_at->toISOString() : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->toISOString() : null,
         ];
     }
 }

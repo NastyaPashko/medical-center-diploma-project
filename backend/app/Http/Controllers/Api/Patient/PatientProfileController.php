@@ -20,7 +20,13 @@ class PatientProfileController extends Controller
         $profile = $this->patientService->getProfileByUserId($userId);
 
         if (!$profile) {
-            return response()->json(['message' => 'Profile not found'], 404);
+            // If user is a patient but has no profile record, create one
+            $user = Auth::user();
+            if ($user && $user->role->name === \App\Models\Role::PATIENT) {
+                $profile = $user->patientProfile()->create();
+            } else {
+                return response()->json(['message' => 'Profile not found'], 404);
+            }
         }
 
         return response()->json([

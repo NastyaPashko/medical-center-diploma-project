@@ -43,7 +43,18 @@ const ProfilePage = () => {
       setSaveLoading(true);
       setSaveError(null);
       const response = await patientApi.updateProfile(formData);
-      setProfile(response.data);
+      const updatedProfile = response.data;
+      setProfile(updatedProfile);
+      
+      // Update user state using the data returned from the profile update
+      if (updatedProfile.user) {
+        setUser(updatedProfile.user);
+      } else {
+        // Fallback to separate fetch if user data is missing
+        const userData = await authApi.getCurrentUser();
+        setUser(userData.data);
+      }
+      
       setIsEditing(false);
       setSuccessMessage('Profile updated successfully!');
     } catch (err) {

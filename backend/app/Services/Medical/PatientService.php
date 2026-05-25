@@ -4,6 +4,7 @@ namespace App\Services\Medical;
 use App\Repositories\Medical\PatientProfileRepository;
 use App\Models\PatientProfile;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Storage;
 
 class PatientService
 {
@@ -30,11 +31,19 @@ class PatientService
     {
         $profile = $this->patientProfileRepository->findByUserId($userId);
         if (!$profile) {
-            // If profile doesn't exist, we might want to create it or throw error.
-            // Based on requirements, it should exist if user is a patient,
-            // but let's be safe and throw for now as we don't have auto-creation logic here yet.
             throw new \Exception('Patient profile not found');
         }
+
+        if (isset($data['avatar'])) {
+            $user = $profile->user;
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+            $path = $data['avatar']->store('avatars', 'public');
+            $user->update(['avatar' => $path]);
+            unset($data['avatar']);
+        }
+
         return $this->patientProfileRepository->update($profile, $data);
     }
 
@@ -44,6 +53,17 @@ class PatientService
         if (!$profile) {
             throw new \Exception('Patient not found');
         }
+
+        if (isset($data['avatar'])) {
+            $user = $profile->user;
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+            $path = $data['avatar']->store('avatars', 'public');
+            $user->update(['avatar' => $path]);
+            unset($data['avatar']);
+        }
+
         return $this->patientProfileRepository->update($profile, $data);
     }
 }

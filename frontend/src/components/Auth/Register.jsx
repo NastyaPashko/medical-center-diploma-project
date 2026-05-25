@@ -58,7 +58,6 @@ const Register = () => {
       const data = await register(submissionData);
 
       console.log('Registration successful:', data);
-      alert('Registration successful! Redirecting to dashboard...');
       navigate('/patient/dashboard');
     } catch (err) {
       if (err.response?.data?.errors) {

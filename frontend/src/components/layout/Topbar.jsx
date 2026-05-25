@@ -50,6 +50,7 @@ const Topbar = ({ drawerWidth, onDrawerToggle, user, onMenuOpen, pageTitle }) =>
               sx={{ ml: 2 }}
             >
               <Avatar 
+                src={user?.avatar_url}
                 sx={{ 
                   width: 35, 
                   height: 35, 

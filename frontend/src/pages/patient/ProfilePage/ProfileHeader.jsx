@@ -9,11 +9,14 @@ const ProfileHeader = ({ user }) => {
     <Paper sx={{ p: 3, mb: 3, borderRadius: 2 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 3 }}>
         <Avatar
+          src={user.avatar_url}
           sx={{
             width: 100,
             height: 100,
             bgcolor: 'primary.main',
-            fontSize: '3rem'
+            fontSize: '3rem',
+            border: '3px solid white',
+            boxShadow: 2
           }}
         >
           {user.name.charAt(0).toUpperCase()}

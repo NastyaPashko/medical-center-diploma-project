@@ -83,6 +83,26 @@ const adminApi = {
     return response.data;
   },
   updatePatient: async (id, data) => {
+    // If data contains a File (avatar), use FormData and POST with _method=PUT
+    if (data.avatar instanceof File || data instanceof FormData) {
+      const formData = data instanceof FormData ? data : new FormData();
+      
+      if (!(data instanceof FormData)) {
+        Object.keys(data).forEach((key) => {
+          if (data[key] !== null && data[key] !== undefined) {
+            formData.append(key, data[key]);
+          }
+        });
+        formData.append('_method', 'PUT');
+      }
+
+      const response = await axiosClient.post(`/admin/patients/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    }
     const response = await axiosClient.put(`/admin/patients/${id}`, data);
     return response.data;
   },

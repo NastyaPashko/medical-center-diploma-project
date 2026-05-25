@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Box,
   Typography,
@@ -8,11 +8,14 @@ import {
   TextField,
   MenuItem,
   CircularProgress,
-  Alert
+  Alert,
+  Avatar,
+  IconButton
 } from '@mui/material';
-import { Save as SaveIcon, Cancel as CancelIcon } from '@mui/icons-material';
+import { Save as SaveIcon, Cancel as CancelIcon, PhotoCamera as PhotoCameraIcon } from '@mui/icons-material';
 
 const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
+  const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     date_of_birth: profile.date_of_birth || '',
     gender: profile.gender || '',
@@ -21,11 +24,31 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
     emergency_contact_name: profile.emergency_contact_name || '',
     emergency_contact_phone: profile.emergency_contact_phone || '',
     notes: profile.notes || '',
+    avatar: null,
   });
+
+  const [previewUrl, setPreviewUrl] = useState(profile.avatar_url || '');
+
+  // Update preview if profile changes (e.g. after successful save)
+  React.useEffect(() => {
+    setPreviewUrl(profile.avatar_url || '');
+  }, [profile.avatar_url]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, avatar: file }));
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleSubmit = (e) => {
@@ -47,6 +70,41 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
 
       <form onSubmit={handleSubmit}>
         <Grid container spacing={3}>
+          <Grid item xs={12} sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+            <Box sx={{ position: 'relative' }}>
+              <Avatar
+                src={previewUrl}
+                sx={{ width: 100, height: 100, mb: 1, border: '2px solid', borderColor: 'divider' }}
+              />
+              <IconButton
+                color="primary"
+                aria-label="upload picture"
+                component="span"
+                onClick={() => fileInputRef.current.click()}
+                sx={{
+                  position: 'absolute',
+                  bottom: 0,
+                  right: 0,
+                  backgroundColor: 'white',
+                  '&:hover': { backgroundColor: '#f5f5f5' },
+                  boxShadow: 1
+                }}
+              >
+                <PhotoCameraIcon />
+              </IconButton>
+            </Box>
+            <input
+              type="file"
+              hidden
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="image/*"
+            />
+            <Typography variant="caption" color="text.secondary">
+              Click to change profile photo
+            </Typography>
+          </Grid>
+
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
@@ -56,6 +114,17 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               value={formData.date_of_birth}
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
+              inputProps={{ max: new Date().toISOString().split('T')[0] }}
+              sx={{
+                '& input::-webkit-calendar-picker-indicator': {
+                  cursor: 'pointer',
+                },
+                '& .MuiInputLabel-root': {
+                  backgroundColor: 'white',
+                  px: 0.5,
+                  ml: -0.5
+                }
+              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -66,8 +135,11 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               name="gender"
               value={formData.gender}
               onChange={handleChange}
+              SelectProps={{
+                displayEmpty: true,
+              }}
             >
-              <MenuItem value="">Select Gender</MenuItem>
+              <MenuItem value="" disabled>Select Gender</MenuItem>
               <MenuItem value="male">Male</MenuItem>
               <MenuItem value="female">Female</MenuItem>
               <MenuItem value="other">Other</MenuItem>

@@ -20,6 +20,7 @@ class UpdatePatientProfileRequest extends FormRequest
             'emergency_contact_phone' => 'nullable|string|max:30',
             'insurance_number' => 'nullable|string|max:100',
             'notes' => 'nullable|string|max:1000',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ];
     }
 }

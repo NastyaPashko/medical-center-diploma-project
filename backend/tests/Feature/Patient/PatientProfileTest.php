@@ -6,6 +6,8 @@ use App\Models\Role;
 use App\Models\User;
 use App\Models\PatientProfile;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PatientProfileTest extends TestCase
@@ -16,6 +18,7 @@ class PatientProfileTest extends TestCase
     {
         parent::setUp();
         $this->seed(\RoleSeeder::class);
+        Storage::fake('public');
     }
 
     public function test_patient_can_view_own_profile()
@@ -33,9 +36,49 @@ class PatientProfileTest extends TestCase
             ->assertJson([
                 'data' => [
                     'user_id' => $user->id,
-                    'notes' => 'Test notes'
+                    'notes' => 'Test notes',
+                    'user' => [
+                        'avatar_url' => null
+                    ]
                 ]
             ]);
+    }
+
+    public function test_patient_can_update_own_profile_including_avatar()
+    {
+        $user = User::factory()->create([
+            'role_id' => Role::where('name', Role::PATIENT)->first()->id
+        ]);
+        PatientProfile::create(['user_id' => $user->id]);
+
+        $avatar = UploadedFile::fake()->create('avatar.jpg', 100); // 100 KB file
+
+        $response = $this->actingAs($user)->postJson('/api/patient/profile', [
+            '_method' => 'PUT',
+            'date_of_birth' => '1990-01-01',
+            'gender' => 'female',
+            'notes' => 'Updated notes',
+            'avatar' => $avatar,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'Profile updated successfully',
+                'data' => [
+                    'date_of_birth' => '1990-01-01',
+                    'gender' => 'female',
+                    'notes' => 'Updated notes'
+                ]
+            ]);
+
+        $user->refresh();
+        $this->assertNotNull($user->avatar);
+        Storage::disk('public')->assertExists($user->avatar);
+
+        $this->assertDatabaseHas('patient_profiles', [
+            'user_id' => $user->id,
+            'notes' => 'Updated notes'
+        ]);
     }
 
     public function test_patient_can_update_own_profile()

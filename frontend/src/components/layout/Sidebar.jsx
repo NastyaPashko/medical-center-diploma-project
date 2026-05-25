@@ -105,6 +105,7 @@ const Sidebar = ({
           }}
         >
           <Avatar 
+            src={user?.avatar_url}
             sx={{ 
               bgcolor: 'primary.main',
               width: 40,

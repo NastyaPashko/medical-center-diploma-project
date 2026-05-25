@@ -19,8 +19,8 @@ class MedicalServiceResource extends JsonResource
             'price' => (float)$this->price,
             'duration_minutes' => (int)$this->duration_minutes,
             'is_active' => (bool)$this->is_active,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->created_at ? $this->created_at->toISOString() : null,
+            'updated_at' => $this->updated_at ? $this->updated_at->toISOString() : null,
         ];
     }
 }

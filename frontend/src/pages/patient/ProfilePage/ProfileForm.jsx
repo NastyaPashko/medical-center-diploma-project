@@ -115,16 +115,6 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               onChange={handleChange}
               InputLabelProps={{ shrink: true }}
               inputProps={{ max: new Date().toISOString().split('T')[0] }}
-              sx={{
-                '& input::-webkit-calendar-picker-indicator': {
-                  cursor: 'pointer',
-                },
-                '& .MuiInputLabel-root': {
-                  backgroundColor: 'white',
-                  px: 0.5,
-                  ml: -0.5
-                }
-              }}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
@@ -187,7 +177,7 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
             <TextField
               fullWidth
               multiline
-              rows={4}
+              rows={2}
               label="Medical Notes"
               name="notes"
               value={formData.notes}
@@ -195,13 +185,14 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               placeholder="Any medical conditions, allergies, etc."
             />
           </Grid>
-          <Grid item xs={12} sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
+          <Grid item xs={12} sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2, mb: 1 }}>
             <Button
               variant="outlined"
               color="inherit"
               startIcon={<CancelIcon />}
               onClick={onCancel}
               disabled={loading}
+              sx={{ minWidth: 120 }}
             >
               Cancel
             </Button>
@@ -211,6 +202,7 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               color="primary"
               startIcon={loading ? <CircularProgress size={20} color="inherit" /> : <SaveIcon />}
               disabled={loading}
+              sx={{ minWidth: 150 }}
             >
               Save Changes
             </Button>

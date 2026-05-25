@@ -12,6 +12,7 @@ import {
   PatientProfilePage,
   PatientServicesPage,
   PatientDoctorsPage,
+  PatientDoctorDetailsPage,
   PatientSymptomsPage,
   PatientAppointmentsPage,
   PatientPaymentsPage
@@ -114,6 +115,7 @@ function App() {
             <Route path="/patient/profile" element={<ProtectedRoute><PatientProfilePage /></ProtectedRoute>} />
             <Route path="/patient/services" element={<ProtectedRoute><PatientServicesPage /></ProtectedRoute>} />
             <Route path="/patient/doctors" element={<ProtectedRoute><PatientDoctorsPage /></ProtectedRoute>} />
+            <Route path="/patient/doctors/:id" element={<ProtectedRoute><PatientDoctorDetailsPage /></ProtectedRoute>} />
             <Route path="/patient/symptoms" element={<ProtectedRoute><PatientSymptomsPage /></ProtectedRoute>} />
             <Route path="/patient/appointments" element={<ProtectedRoute><PatientAppointmentsPage /></ProtectedRoute>} />
             <Route path="/patient/payments" element={<ProtectedRoute><PatientPaymentsPage /></ProtectedRoute>} />

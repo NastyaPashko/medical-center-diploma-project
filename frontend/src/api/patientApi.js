@@ -26,6 +26,22 @@ const patientApi = {
     const response = await axiosClient.put('/patient/profile', data);
     return response.data;
   },
+  getDoctors: async (params) => {
+    const response = await axiosClient.get('/doctors', { params });
+    return response.data;
+  },
+  getDoctorById: async (id) => {
+    const response = await axiosClient.get(`/doctors/${id}`);
+    return response.data;
+  },
+  getDepartments: async () => {
+    const response = await axiosClient.get('/departments');
+    return response.data;
+  },
+  getSpecializations: async (params) => {
+    const response = await axiosClient.get('/specializations', { params });
+    return response.data;
+  },
 };
 
 export default patientApi;

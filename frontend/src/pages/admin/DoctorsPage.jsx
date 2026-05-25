@@ -342,7 +342,7 @@ const AdminDoctorsPage = () => {
               )}
               
               <Grid item xs={12}>
-                <FormControl fullWidth required sx={{ minWidth: 200 }}>
+                <FormControl fullWidth required>
                   <InputLabel id="department-select-label">Select Department</InputLabel>
                   <Select
                     labelId="department-select-label"
@@ -354,7 +354,6 @@ const AdminDoctorsPage = () => {
                       PaperProps: { 
                         sx: { maxHeight: 300 } 
                       },
-                      // Ensure menu stays within dialog
                       disablePortal: true 
                     }}
                   >
@@ -368,7 +367,7 @@ const AdminDoctorsPage = () => {
               </Grid>
 
               <Grid item xs={12}>
-                <FormControl fullWidth required disabled={!formData.department_id} sx={{ minWidth: 200 }}>
+                <FormControl fullWidth required disabled={!formData.department_id}>
                   <InputLabel id="specialization-select-label">Select Specialization</InputLabel>
                   <Select
                     labelId="specialization-select-label"
@@ -376,7 +375,12 @@ const AdminDoctorsPage = () => {
                     value={formData.specialization_id}
                     onChange={handleChange}
                     label="Select Specialization"
-                    MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
+                    MenuProps={{ 
+                      PaperProps: { 
+                        sx: { maxHeight: 300 } 
+                      },
+                      disablePortal: true
+                    }}
                   >
                     {filteredSpecializations.length === 0 ? (
                       <MenuItem disabled value="">

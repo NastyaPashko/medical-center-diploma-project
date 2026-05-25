@@ -247,9 +247,10 @@ const AdminSpecializationsPage = () => {
               onChange={handleChange}
             />
             
-            <FormControl fullWidth margin="normal" required sx={{ minWidth: 240 }}>
-              <InputLabel>Department</InputLabel>
+            <FormControl fullWidth margin="normal" required>
+              <InputLabel id="dept-label">Department</InputLabel>
               <Select
+                labelId="dept-label"
                 name="department_id"
                 value={formData.department_id}
                 onChange={handleChange}

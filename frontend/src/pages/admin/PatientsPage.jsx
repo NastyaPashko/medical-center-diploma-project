@@ -158,6 +158,7 @@ const AdminPatientsPage = () => {
             <TableRow>
               <TableCell padding="checkbox" sx={{ pl: 2 }}></TableCell>
               <TableCell fontWeight="bold">Patient</TableCell>
+              <TableCell>Phone</TableCell>
               <TableCell>Insurance</TableCell>
               <TableCell>Gender</TableCell>
               <TableCell>Birth Date</TableCell>
@@ -167,13 +168,13 @@ const AdminPatientsPage = () => {
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
                   <CircularProgress size={24} />
                 </TableCell>
               </TableRow>
             ) : patients.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
+                <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
                   No patients found.
                 </TableCell>
               </TableRow>
@@ -195,6 +196,9 @@ const AdminPatientsPage = () => {
                     <Typography variant="caption" color="text.secondary">
                       {patient.user?.email}
                     </Typography>
+                  </TableCell>
+                  <TableCell>
+                    {patient.user?.phone || 'N/A'}
                   </TableCell>
                   <TableCell>{patient.insurance_number || 'N/A'}</TableCell>
                   <TableCell>{patient.gender ? (patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)) : 'N/A'}</TableCell>

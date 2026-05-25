@@ -29,10 +29,11 @@ class AdminDoctorTest extends TestCase
             'role_id' => $adminRole->id,
         ]);
 
-        $this->department = Department::create(['name' => 'Cardiology']);
+        $this->department = Department::create(['name' => 'Cardiology', 'is_active' => true]);
         $this->specialization = Specialization::create([
             'name' => 'Cardiologist',
-            'department_id' => $this->department->id
+            'department_id' => $this->department->id,
+            'is_active' => true
         ]);
     }
 

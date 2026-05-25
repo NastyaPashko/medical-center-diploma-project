@@ -49,6 +49,10 @@ const AdminDoctorsPage = () => {
   const [doctorToDelete, setDoctorToDelete] = useState(null);
   const [formData, setFormData] = useState({
     user_id: '',
+    name: '',
+    email: '',
+    phone: '',
+    password: '',
     department_id: '',
     specialization_id: '',
     bio: '',
@@ -90,20 +94,28 @@ const AdminDoctorsPage = () => {
       setEditingDoctor(doctor);
       setFormData({
         user_id: doctor.user_id,
-        department_id: doctor.department_id,
-        specialization_id: doctor.specialization_id,
+        name: doctor.user?.name || '',
+        email: doctor.user?.email || '',
+        phone: doctor.user?.phone || '',
+        password: '',
+        department_id: doctor.department_id || '',
+        specialization_id: doctor.specialization_id || '',
         bio: doctor.bio || '',
         experience_years: doctor.experience_years || '',
         education: doctor.education || '',
         office_number: doctor.office_number || '',
-        consultation_price: doctor.consultation_price,
+        consultation_price: doctor.consultation_price || '',
         is_available: !!doctor.is_available,
       });
     } else {
       setEditingDoctor(null);
       setFormData({
         user_id: '',
-        department_id: departments.length > 0 ? departments[0].id : '',
+        name: '',
+        email: '',
+        phone: '',
+        password: '',
+        department_id: '',
         specialization_id: '',
         bio: '',
         experience_years: '',
@@ -124,10 +136,19 @@ const AdminDoctorsPage = () => {
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value,
-    }));
+    setFormData((prev) => {
+      const newData = {
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value,
+      };
+      
+      // Reset specialization if department changes
+      if (name === 'department_id') {
+        newData.specialization_id = '';
+      }
+      
+      return newData;
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -167,9 +188,10 @@ const AdminDoctorsPage = () => {
     }
   };
 
-  const filteredSpecializations = specializations.filter(
-    (spec) => spec.department_id === formData.department_id
-  );
+  const filteredSpecializations = specializations.filter((spec) => {
+    const matchesDept = String(spec.department_id) === String(formData.department_id);
+    return matchesDept && spec.is_active;
+  });
 
   return (
     <Box sx={{ py: 3 }}>
@@ -181,7 +203,14 @@ const AdminDoctorsPage = () => {
           <IconButton onClick={fetchData} sx={{ mr: 1 }}>
             <RefreshIcon />
           </IconButton>
-          {/* Note: In a complete implementation, adding a doctor would involve picking a User first */}
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => handleOpen()}
+            sx={{ borderRadius: 2 }}
+          >
+            Add Doctor
+          </Button>
         </Box>
       </Box>
 
@@ -260,35 +289,76 @@ const AdminDoctorsPage = () => {
           <DialogTitle>
             {editingDoctor ? `Edit Profile: ${editingDoctor.user?.name}` : 'Create Doctor Profile'}
           </DialogTitle>
-          <DialogContent dividers>
+          <DialogContent dividers sx={{ pt: 2 }}>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-            <Grid container spacing={2}>
+            <Grid container spacing={2} sx={{ mt: 0.5 }}>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  name="name"
+                  label="Doctor's Full Name"
+                  fullWidth
+                  required
+                  value={formData.name}
+                  onChange={handleChange}
+                  disabled={!!editingDoctor}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  name="email"
+                  label="Email Address"
+                  type="email"
+                  fullWidth
+                  required
+                  value={formData.email}
+                  onChange={handleChange}
+                  disabled={!!editingDoctor}
+                />
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <TextField
+                  name="phone"
+                  label="Phone Number"
+                  fullWidth
+                  required
+                  value={formData.phone}
+                  onChange={handleChange}
+                  disabled={!!editingDoctor}
+                />
+              </Grid>
               {!editingDoctor && (
-                <Grid item xs={12}>
+                <Grid item xs={12} md={6}>
                   <TextField
-                    name="user_id"
-                    label="User ID"
+                    name="password"
+                    label="Initial Password"
+                    type="password"
                     fullWidth
                     required
-                    type="number"
-                    margin="normal"
-                    helperText="Enter the ID of the user to assign as a doctor"
-                    value={formData.user_id}
+                    value={formData.password}
                     onChange={handleChange}
+                    placeholder="At least 8 characters"
                   />
                 </Grid>
               )}
               
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth margin="normal" required>
-                  <InputLabel>Department</InputLabel>
+              <Grid item xs={12}>
+                <FormControl fullWidth required sx={{ minWidth: 200 }}>
+                  <InputLabel id="department-select-label">Select Department</InputLabel>
                   <Select
+                    labelId="department-select-label"
                     name="department_id"
                     value={formData.department_id}
                     onChange={handleChange}
-                    label="Department"
+                    label="Select Department"
+                    MenuProps={{ 
+                      PaperProps: { 
+                        sx: { maxHeight: 300 } 
+                      },
+                      // Ensure menu stays within dialog
+                      disablePortal: true 
+                    }}
                   >
-                    {departments.map((dept) => (
+                    {departments.filter(d => d.is_active).map((dept) => (
                       <MenuItem key={dept.id} value={dept.id}>
                         {dept.name}
                       </MenuItem>
@@ -297,20 +367,28 @@ const AdminDoctorsPage = () => {
                 </FormControl>
               </Grid>
 
-              <Grid item xs={12} md={6}>
-                <FormControl fullWidth margin="normal" required>
-                  <InputLabel>Specialization</InputLabel>
+              <Grid item xs={12}>
+                <FormControl fullWidth required disabled={!formData.department_id} sx={{ minWidth: 200 }}>
+                  <InputLabel id="specialization-select-label">Select Specialization</InputLabel>
                   <Select
+                    labelId="specialization-select-label"
                     name="specialization_id"
                     value={formData.specialization_id}
                     onChange={handleChange}
-                    label="Specialization"
+                    label="Select Specialization"
+                    MenuProps={{ PaperProps: { sx: { maxHeight: 300 } } }}
                   >
-                    {filteredSpecializations.map((spec) => (
-                      <MenuItem key={spec.id} value={spec.id}>
-                        {spec.name}
+                    {filteredSpecializations.length === 0 ? (
+                      <MenuItem disabled value="">
+                        {formData.department_id ? "No specializations found" : "Select a department first"}
                       </MenuItem>
-                    ))}
+                    ) : (
+                      filteredSpecializations.map((spec) => (
+                        <MenuItem key={spec.id} value={spec.id}>
+                          {spec.name}
+                        </MenuItem>
+                      ))
+                    )}
                   </Select>
                 </FormControl>
               </Grid>
@@ -321,9 +399,9 @@ const AdminDoctorsPage = () => {
                   label="Experience (years)"
                   type="number"
                   fullWidth
-                  margin="normal"
                   value={formData.experience_years}
                   onChange={handleChange}
+                  inputProps={{ min: 0, max: 60 }}
                 />
               </Grid>
 
@@ -334,9 +412,9 @@ const AdminDoctorsPage = () => {
                   type="number"
                   fullWidth
                   required
-                  margin="normal"
                   value={formData.consultation_price}
                   onChange={handleChange}
+                  inputProps={{ min: 0, max: 100000, step: "0.01" }}
                   InputProps={{
                     startAdornment: <InputAdornment position="start">$</InputAdornment>,
                   }}
@@ -348,7 +426,6 @@ const AdminDoctorsPage = () => {
                   name="education"
                   label="Education"
                   fullWidth
-                  margin="normal"
                   value={formData.education}
                   onChange={handleChange}
                 />
@@ -359,7 +436,6 @@ const AdminDoctorsPage = () => {
                   name="office_number"
                   label="Office Number"
                   fullWidth
-                  margin="normal"
                   value={formData.office_number}
                   onChange={handleChange}
                 />
@@ -372,7 +448,6 @@ const AdminDoctorsPage = () => {
                   fullWidth
                   multiline
                   rows={4}
-                  margin="normal"
                   value={formData.bio}
                   onChange={handleChange}
                 />

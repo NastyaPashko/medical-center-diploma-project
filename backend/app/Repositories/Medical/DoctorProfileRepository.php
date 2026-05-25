@@ -39,7 +39,17 @@ class DoctorProfileRepository
 
     public function create(array $data): DoctorProfile
     {
-        return DoctorProfile::create($data);
+        return DoctorProfile::create([
+            'user_id' => $data['user_id'],
+            'department_id' => $data['department_id'],
+            'specialization_id' => $data['specialization_id'],
+            'bio' => $data['bio'] ?? null,
+            'experience_years' => $data['experience_years'] ?? null,
+            'education' => $data['education'] ?? null,
+            'office_number' => $data['office_number'] ?? null,
+            'consultation_price' => $data['consultation_price'],
+            'is_available' => $data['is_available'] ?? true,
+        ]);
     }
 
     public function update(DoctorProfile $profile, array $data): DoctorProfile

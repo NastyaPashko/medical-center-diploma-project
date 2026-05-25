@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\AdminDoctorController;
 use App\Http\Controllers\Api\Admin\AdminMedicalServiceController;
 use App\Http\Controllers\Api\Admin\AdminPatientController;
 use App\Http\Controllers\Api\Admin\AdminSpecializationController;
+use App\Http\Controllers\Api\Admin\AdminUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\DoctorController;
@@ -42,6 +43,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('patients', [AdminPatientController::class, 'index']);
         Route::get('patients/{id}', [AdminPatientController::class, 'show']);
         Route::put('patients/{id}', [AdminPatientController::class, 'update']);
+
+        // Users (for assignment)
+        Route::get('users', [AdminUserController::class, 'index']);
     });
 });
 

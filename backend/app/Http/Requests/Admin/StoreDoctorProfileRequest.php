@@ -16,13 +16,19 @@ class StoreDoctorProfileRequest extends FormRequest
     {
         return [
             'user_id' => [
-                'required',
+                'nullable',
                 'exists:users,id',
                 'unique:doctor_profiles,user_id',
                 Rule::exists('users', 'id')->where(function ($query) {
                     $query->where('role_id', Role::where('name', Role::DOCTOR)->first()->id);
                 }),
             ],
+            // User fields for new doctor
+            'name' => 'required_without:user_id|string|max:255',
+            'email' => 'required_without:user_id|email|unique:users,email|max:255',
+            'phone' => 'required_without:user_id|string|unique:users,phone|max:20',
+            'password' => 'required_without:user_id|string|min:8',
+
             'department_id' => [
                 'required',
                 Rule::exists('departments', 'id')->where(function ($query) {

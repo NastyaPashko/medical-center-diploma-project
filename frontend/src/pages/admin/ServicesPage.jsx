@@ -276,40 +276,38 @@ const AdminServicesPage = () => {
               onChange={handleChange}
             />
             
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <FormControl fullWidth margin="normal" required>
-                <InputLabel>Department</InputLabel>
-                <Select
-                  name="department_id"
-                  value={formData.department_id}
-                  onChange={handleChange}
-                  label="Department"
-                >
-                  {departments.map((dept) => (
-                    <MenuItem key={dept.id} value={dept.id}>
-                      {dept.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
+            <FormControl fullWidth margin="normal" required sx={{ minWidth: 240 }}>
+              <InputLabel>Department</InputLabel>
+              <Select
+                name="department_id"
+                value={formData.department_id}
+                onChange={handleChange}
+                label="Department"
+              >
+                {departments.map((dept) => (
+                  <MenuItem key={dept.id} value={dept.id}>
+                    {dept.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
-              <FormControl fullWidth margin="normal">
-                <InputLabel>Specialization (Optional)</InputLabel>
-                <Select
-                  name="specialization_id"
-                  value={formData.specialization_id}
-                  onChange={handleChange}
-                  label="Specialization (Optional)"
-                >
-                  <MenuItem value=""><em>None (General Service)</em></MenuItem>
-                  {filteredSpecializations.map((spec) => (
-                    <MenuItem key={spec.id} value={spec.id}>
-                      {spec.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Box>
+            <FormControl fullWidth margin="normal" sx={{ minWidth: 240 }}>
+              <InputLabel>Specialization (Optional)</InputLabel>
+              <Select
+                name="specialization_id"
+                value={formData.specialization_id}
+                onChange={handleChange}
+                label="Specialization (Optional)"
+              >
+                <MenuItem value=""><em>None (General Service)</em></MenuItem>
+                {filteredSpecializations.map((spec) => (
+                  <MenuItem key={spec.id} value={spec.id}>
+                    {spec.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
 
             <Box sx={{ display: 'flex', gap: 2 }}>
               <TextField

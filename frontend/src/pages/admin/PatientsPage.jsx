@@ -347,6 +347,7 @@ const AdminPatientsPage = () => {
                   margin="normal"
                   value={formData.gender}
                   onChange={handleChange}
+                  sx={{ minWidth: 150 }}
                 />
               </Grid>
               <Grid item xs={12}>

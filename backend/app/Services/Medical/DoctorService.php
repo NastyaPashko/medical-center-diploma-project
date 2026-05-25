@@ -23,6 +23,17 @@ class DoctorService
 
     public function createDoctor(array $data): DoctorProfile
     {
+        if (empty($data['user_id'])) {
+            $user = \App\Models\User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'phone' => $data['phone'],
+                'password' => \Illuminate\Support\Facades\Hash::make($data['password']),
+                'role_id' => \App\Models\Role::where('name', \App\Models\Role::DOCTOR)->first()->id,
+            ]);
+            $data['user_id'] = $user->id;
+        }
+
         return $this->doctorProfileRepository->create($data);
     }
 

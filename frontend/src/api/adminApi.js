@@ -106,6 +106,12 @@ const adminApi = {
     const response = await axiosClient.put(`/admin/patients/${id}`, data);
     return response.data;
   },
+
+  // Users
+  getUsers: async (params) => {
+    const response = await axiosClient.get('/admin/users', { params });
+    return response.data;
+  },
 };
 
 export default adminApi;

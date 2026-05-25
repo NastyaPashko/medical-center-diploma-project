@@ -138,6 +138,7 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               SelectProps={{
                 displayEmpty: true,
               }}
+              sx={{ minWidth: 200 }}
             >
               <MenuItem value="" disabled>Select Gender</MenuItem>
               <MenuItem value="male">Male</MenuItem>

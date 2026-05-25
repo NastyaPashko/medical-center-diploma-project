@@ -78,6 +78,47 @@ class AdminDoctorTest extends TestCase
         ]);
     }
 
+    public function test_admin_can_create_doctor_profile_with_new_user(): void
+    {
+        $department = Department::create(['name' => 'Neurology', 'is_active' => true]);
+        $specialization = Specialization::create([
+            'name' => 'Neurologist',
+            'department_id' => $department->id,
+            'is_active' => true
+        ]);
+
+        $doctorData = [
+            'name' => 'New Doctor',
+            'email' => 'newdoctor@example.com',
+            'phone' => '+380991112233',
+            'password' => 'password123',
+            'department_id' => $department->id,
+            'specialization_id' => $specialization->id,
+            'bio' => 'A new doctor bio',
+            'experience_years' => 5,
+            'consultation_price' => 150.00,
+            'is_available' => true,
+        ];
+
+        $response = $this->actingAs($this->admin)->postJson('/api/admin/doctors', $doctorData);
+
+        $response->assertStatus(201)
+            ->assertJsonPath('message', 'Doctor profile created successfully');
+
+        $this->assertDatabaseHas('users', [
+            'name' => 'New Doctor',
+            'email' => 'newdoctor@example.com',
+        ]);
+
+        $user = \App\Models\User::where('email', 'newdoctor@example.com')->first();
+
+        $this->assertDatabaseHas('doctor_profiles', [
+            'user_id' => $user->id,
+            'department_id' => $department->id,
+            'specialization_id' => $specialization->id,
+        ]);
+    }
+
     public function test_admin_can_update_doctor_profile(): void
     {
         $doctorUser = User::factory()->create(['role_id' => Role::where('name', Role::DOCTOR)->first()->id]);

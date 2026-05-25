@@ -17,15 +17,6 @@ class UpdateDoctorProfileRequest extends FormRequest
         $doctorId = $this->route('doctor');
 
         return [
-            'user_id' => [
-                'sometimes',
-                'required',
-                'exists:users,id',
-                Rule::unique('doctor_profiles', 'user_id')->ignore($doctorId),
-                Rule::exists('users', 'id')->where(function ($query) {
-                    $query->where('role_id', Role::where('name', Role::DOCTOR)->first()->id);
-                }),
-            ],
             'department_id' => [
                 'sometimes',
                 'required',

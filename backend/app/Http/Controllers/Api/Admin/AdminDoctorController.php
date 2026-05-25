@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Api\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreDoctorProfileRequest;
+use App\Http\Requests\Admin\UpdateDoctorProfileRequest;
 use App\Http\Resources\Medical\DoctorResource;
 use App\Services\Medical\DoctorService;
 use Illuminate\Http\JsonResponse;
@@ -42,7 +43,7 @@ class AdminDoctorController extends Controller
         ]);
     }
 
-    public function update(StoreDoctorProfileRequest $request, int $id): JsonResponse
+    public function update(UpdateDoctorProfileRequest $request, int $id): JsonResponse
     {
         try {
             // Adjust validation for update (user_id uniqueness check needs to ignore current)

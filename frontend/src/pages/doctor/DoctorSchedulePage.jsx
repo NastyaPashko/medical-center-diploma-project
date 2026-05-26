@@ -106,10 +106,14 @@ const DoctorSchedulePage = () => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    {schedule.start_time.substring(0, 5)}
+                    <Box sx={{ whiteSpace: 'nowrap' }}>
+                      {schedule.start_time.substring(0, 5)}
+                    </Box>
                   </TableCell>
                   <TableCell>
-                    {schedule.end_time.substring(0, 5)}
+                    <Box sx={{ whiteSpace: 'nowrap' }}>
+                      {schedule.end_time.substring(0, 5)}
+                    </Box>
                   </TableCell>
                   <TableCell>
                     {t('doctor.slot_duration_minutes', { count: schedule.slot_duration_minutes })}

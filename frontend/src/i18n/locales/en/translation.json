@@ -59,7 +59,12 @@
       "patient_statistics": "Patient Statistics",
       "active_patients": "Active Patients",
       "manage_schedule": "Manage Schedule",
-      "recent_activity": "Recent Activity"
+      "workload_summary": "Workload Summary",
+      "patients_today": "Patients Today",
+      "avg_appointment_time": "Avg Appointment Time",
+      "upcoming_appointments": "Upcoming Appointments",
+      "welcome_back_text": "Here's what's happening with your practice today.",
+      "no_appointments_today": "No appointments scheduled for today."
     },
     "admin": {
       "total_doctors": "Total Doctors",
@@ -68,7 +73,19 @@
       "daily_appointments": "Daily Appointments",
       "system_status": "System Status",
       "user_management": "User Management",
-      "platform_overview": "Platform Overview"
+      "platform_overview": "Platform Overview",
+      "total_services": "Total Services",
+      "recent_activity": "Recent Activity",
+      "analytics_preview": "Analytics Preview",
+      "manage_doctors": "Manage Doctors",
+      "manage_patients": "Manage Patients",
+      "manage_services": "Manage Services",
+      "manage_schedules": "Manage Schedules",
+      "activity_user_registered": "New user registered: {{name}}",
+      "activity_doctor_added": "New doctor profile created: {{name}}",
+      "activity_dept_updated": "Department {{name}} updated",
+      "view_all_activity": "View All Activity",
+      "generate_report": "Generate Report"
     }
   },
   "auth": {

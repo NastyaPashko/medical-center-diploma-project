@@ -37,14 +37,14 @@ const DoctorDashboardPage = () => {
   const user = { name: 'Dr. Smith' };
   
   const stats = [
-    { title: t('dashboard.doctor.active_patients'), value: '42', icon: <PatientsIcon color="primary" />, color: 'primary.light' },
-    { title: t('dashboard.doctor.todays_schedule'), value: '8', icon: <ScheduleIcon color="secondary" />, color: 'secondary.light' },
-    { title: t('dashboard.doctor.pending_notes'), value: '3', icon: <NotesIcon color="error" />, color: 'error.light' },
+    { title: t('dashboard.doctor.active_patients'), value: '42', icon: <PatientsIcon sx={{ color: '#fff' }} />, color: '#1a73e8' }, // Google Blue
+    { title: t('dashboard.doctor.todays_schedule'), value: '8', icon: <ScheduleIcon sx={{ color: '#fff' }} />, color: '#34a853' }, // Google Green
+    { title: t('dashboard.doctor.pending_notes'), value: '3', icon: <NotesIcon sx={{ color: '#fff' }} />, color: '#f9ab00' }, // Google Yellow/Orange
   ];
 
   const quickActions = [
-    { title: t('dashboard.doctor.manage_schedule'), icon: <ScheduleIcon />, path: '/doctor/schedule', color: '#4caf50' },
-    { title: t('common.profile'), icon: <ProfileIcon />, path: '/doctor/profile', color: '#2196f3' },
+    { title: t('dashboard.doctor.manage_schedule'), icon: <ScheduleIcon />, path: '/doctor/schedule', color: '#009688' }, // Teal
+    { title: t('common.profile'), icon: <ProfileIcon />, path: '/doctor/profile', color: '#673ab7' }, // Deep Purple
   ];
 
   return (

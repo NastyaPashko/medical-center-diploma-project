@@ -262,9 +262,15 @@ const AdminSchedulesPage = () => {
                   </TableCell>
                   <TableCell>{getWeekdayLabel(schedule.day_of_week)}</TableCell>
                   <TableCell>
-                    {schedule.start_time.substring(0, 5)} - {schedule.end_time.substring(0, 5)}
+                    <Box sx={{ display: 'flex', alignItems: 'center', whiteSpace: 'nowrap' }}>
+                      {schedule.start_time.substring(0, 5)} — {schedule.end_time.substring(0, 5)}
+                    </Box>
                   </TableCell>
-                  <TableCell>{t('doctor.slot_duration_minutes', { count: schedule.slot_duration_minutes })}</TableCell>
+                  <TableCell>
+                    <Typography variant="body2">
+                      {t('doctor.slot_duration_minutes', { count: schedule.slot_duration_minutes })}
+                    </Typography>
+                  </TableCell>
                   <TableCell>
                     <Chip
                       label={schedule.is_active ? t('common.active') : t('common.inactive')}

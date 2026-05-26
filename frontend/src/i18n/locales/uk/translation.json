@@ -59,7 +59,12 @@
       "patient_statistics": "Статистика пацієнтів",
       "active_patients": "Активні пацієнти",
       "manage_schedule": "Керувати графіком",
-      "recent_activity": "Остання активність"
+      "workload_summary": "Підсумок навантаження",
+      "patients_today": "Пацієнтів сьогодні",
+      "avg_appointment_time": "Сер. час прийому",
+      "upcoming_appointments": "Найближчі записи",
+      "welcome_back_text": "Ось що відбувається у вашій практиці сьогодні.",
+      "no_appointments_today": "На сьогодні записів не заплановано."
     },
     "admin": {
       "total_doctors": "Всього лікарів",
@@ -68,7 +73,19 @@
       "daily_appointments": "Записи за день",
       "system_status": "Статус системи",
       "user_management": "Керування користувачами",
-      "platform_overview": "Огляд платформи"
+      "platform_overview": "Огляд платформи",
+      "total_services": "Всього послуг",
+      "recent_activity": "Остання активність",
+      "analytics_preview": "Огляд аналітики",
+      "manage_doctors": "Керувати лікарями",
+      "manage_patients": "Керувати пацієнтами",
+      "manage_services": "Керувати послугами",
+      "manage_schedules": "Керувати графіками",
+      "activity_user_registered": "Зареєстровано нового користувача: {{name}}",
+      "activity_doctor_added": "Створено профіль лікаря: {{name}}",
+      "activity_dept_updated": "Оновлено відділення {{name}}",
+      "view_all_activity": "Переглянути всю активність",
+      "generate_report": "Сформувати звіт"
     }
   },
   "auth": {

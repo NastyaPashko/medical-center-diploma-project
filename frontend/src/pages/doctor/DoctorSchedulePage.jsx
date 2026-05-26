@@ -42,7 +42,7 @@ const DoctorSchedulePage = () => {
       setSchedules(response.data || []);
       setError(null);
     } catch (err) {
-      setError(t('common.error') + ': Failed to fetch schedule data.');
+      setError(t('common.error') + ': ' + (err.response?.data?.message || err.message));
       console.error(err);
     } finally {
       setLoading(false);

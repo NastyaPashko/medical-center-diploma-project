@@ -26,7 +26,41 @@
     "logout": "Logout",
     "profile": "Profile",
     "under_development": "Module Under Development",
-    "placeholder_text": "The {{title}} functionality will be implemented in the upcoming updates. This module will allow you to manage your medical records and interactions more efficiently."
+    "placeholder_text": "The {{title}} functionality will be implemented in the upcoming updates. This module will allow you to manage your medical records and interactions more efficiently.",
+    "coming_soon": "Coming Soon",
+    "view_all": "View All",
+    "quick_actions": "Quick Actions",
+    "overview": "Overview",
+    "welcome": "Welcome, {{name}}!",
+    "no_upcoming_appointments": "No upcoming appointments.",
+    "book_now": "Book Now"
+  },
+  "dashboard": {
+    "patient": {
+      "upcoming_appointments": "Upcoming Appointments",
+      "medical_history": "Recent Medical History",
+      "health_tips": "Personalized Health Tips",
+      "find_doctor": "Find a Doctor",
+      "my_prescriptions": "My Prescriptions",
+      "symptom_checker": "Symptom Checker"
+    },
+    "doctor": {
+      "todays_schedule": "Today's Schedule",
+      "pending_notes": "Pending Patient Notes",
+      "patient_statistics": "Patient Statistics",
+      "active_patients": "Active Patients",
+      "manage_schedule": "Manage Schedule",
+      "recent_activity": "Recent Activity"
+    },
+    "admin": {
+      "total_doctors": "Total Doctors",
+      "total_patients": "Total Patients",
+      "active_departments": "Active Departments",
+      "daily_appointments": "Daily Appointments",
+      "system_status": "System Status",
+      "user_management": "User Management",
+      "platform_overview": "Platform Overview"
+    }
   },
   "auth": {
     "login": "Login",

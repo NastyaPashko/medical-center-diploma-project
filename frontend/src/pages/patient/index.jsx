@@ -1,10 +1,10 @@
 import React from 'react';
-import PlaceholderPage from '../PlaceholderPage';
+import PatientDashboardPage from './PatientDashboardPage';
 import ProfilePage from './ProfilePage/ProfilePage';
 import DoctorListPage from './DoctorsPage/DoctorListPage';
 import DoctorDetailsPage from './DoctorsPage/DoctorDetailsPage';
 
-export const PatientDashboardPage = () => <PlaceholderPage title="Patient Dashboard" />;
+export { PatientDashboardPage };
 export { ProfilePage as PatientProfilePage };
 export const PatientServicesPage = () => <PlaceholderPage title="Medical Services" />;
 export { DoctorListPage as PatientDoctorsPage };

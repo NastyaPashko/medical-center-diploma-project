@@ -26,7 +26,41 @@
     "logout": "Вийти",
     "profile": "Профіль",
     "under_development": "Модуль у розробці",
-    "placeholder_text": "Функціонал {{title}} буде реалізовано в найближчих оновленнях. Цей модуль дозволить вам ефективніше керувати медичними записами та взаємодіями."
+    "placeholder_text": "Функціонал {{title}} буде реалізовано в найближчих оновленнях. Цей модуль дозволить вам ефективніше керувати медичними записами та взаємодіями.",
+    "coming_soon": "Незабаром",
+    "view_all": "Переглянути все",
+    "quick_actions": "Швидкі дії",
+    "overview": "Огляд",
+    "welcome": "Ласкаво просимо, {{name}}!",
+    "no_upcoming_appointments": "Немає запланованих записів.",
+    "book_now": "Записатись"
+  },
+  "dashboard": {
+    "patient": {
+      "upcoming_appointments": "Найближчі записи",
+      "medical_history": "Остання медична історія",
+      "health_tips": "Персональні поради щодо здоров'я",
+      "find_doctor": "Знайти лікаря",
+      "my_prescriptions": "Мої рецепти",
+      "symptom_checker": "Перевірка симптомів"
+    },
+    "doctor": {
+      "todays_schedule": "Графік на сьогодні",
+      "pending_notes": "Очікувані нотатки",
+      "patient_statistics": "Статистика пацієнтів",
+      "active_patients": "Активні пацієнти",
+      "manage_schedule": "Керувати графіком",
+      "recent_activity": "Остання активність"
+    },
+    "admin": {
+      "total_doctors": "Всього лікарів",
+      "total_patients": "Всього пацієнтів",
+      "active_departments": "Активні відділення",
+      "daily_appointments": "Записи за день",
+      "system_status": "Статус системи",
+      "user_management": "Керування користувачами",
+      "platform_overview": "Огляд платформи"
+    }
   },
   "auth": {
     "login": "Вхід",

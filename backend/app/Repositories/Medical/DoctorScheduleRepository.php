@@ -8,7 +8,7 @@ class DoctorScheduleRepository
 {
     public function getAll(array $filters = []): Collection
     {
-        $query = DoctorSchedule::query()->with('doctorProfile.user');
+        $query = DoctorSchedule::query()->with(['doctorProfile.user', 'doctorProfile.department', 'doctorProfile.specialization']);
 
         if (!empty($filters['doctor_profile_id'])) {
             $query->where('doctor_profile_id', $filters['doctor_profile_id']);
@@ -23,7 +23,7 @@ class DoctorScheduleRepository
 
     public function findById(int $id): ?DoctorSchedule
     {
-        return DoctorSchedule::with('doctorProfile.user')->find($id);
+        return DoctorSchedule::with(['doctorProfile.user', 'doctorProfile.department', 'doctorProfile.specialization'])->find($id);
     }
 
     public function create(array $data): DoctorSchedule

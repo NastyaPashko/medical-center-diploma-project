@@ -249,15 +249,15 @@ const AdminSchedulesPage = () => {
                 <TableRow key={schedule.id}>
                   <TableCell>
                     <Typography variant="subtitle2">
-                      {schedule.doctor?.name || 'Unknown Doctor'}
+                      {schedule.doctor?.user?.name || 'Unknown Doctor'}
                     </Typography>
                   </TableCell>
                   <TableCell>
                     <Typography variant="body2" color="textSecondary">
-                      {schedule.doctor?.department || 'N/A'}
+                      {schedule.doctor?.department?.name || 'N/A'}
                     </Typography>
                     <Typography variant="caption" color="textSecondary">
-                      {schedule.doctor?.specialization || 'N/A'}
+                      {schedule.doctor?.specialization?.name || 'N/A'}
                     </Typography>
                   </TableCell>
                   <TableCell>{getWeekdayLabel(schedule.day_of_week)}</TableCell>

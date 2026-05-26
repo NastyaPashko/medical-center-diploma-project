@@ -86,6 +86,62 @@ class DoctorScheduleTest extends TestCase
         $this->assertDatabaseHas('doctor_schedules', ['day_of_week' => 2]);
     }
 
+    public function test_schedule_validation_rules(): void
+    {
+        $response = $this->actingAs($this->admin)->postJson('/api/admin/schedules', [
+            'doctor_profile_id' => $this->doctorProfile->id,
+            'day_of_week' => 8, // Invalid
+            'start_time' => '10:00',
+            'end_time' => '09:00', // After start_time
+            'slot_duration_minutes' => 7, // Min 10 and divisible by 5
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['day_of_week', 'end_time', 'slot_duration_minutes']);
+    }
+
+    public function test_prevent_overlapping_schedules(): void
+    {
+        DoctorSchedule::create([
+            'doctor_profile_id' => $this->doctorProfile->id,
+            'day_of_week' => 1,
+            'start_time' => '09:00',
+            'end_time' => '12:00',
+            'slot_duration_minutes' => 30
+        ]);
+
+        $data = [
+            'doctor_profile_id' => $this->doctorProfile->id,
+            'day_of_week' => 1,
+            'start_time' => '11:00', // Overlaps
+            'end_time' => '13:00',
+            'slot_duration_minutes' => 30
+        ];
+
+        $response = $this->actingAs($this->admin)->postJson('/api/admin/schedules', $data);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['start_time']);
+    }
+
+    public function test_prevent_schedule_for_unavailable_doctor(): void
+    {
+        $this->doctorProfile->update(['is_available' => false]);
+
+        $data = [
+            'doctor_profile_id' => $this->doctorProfile->id,
+            'day_of_week' => 1,
+            'start_time' => '09:00',
+            'end_time' => '17:00',
+            'slot_duration_minutes' => 30
+        ];
+
+        $response = $this->actingAs($this->admin)->postJson('/api/admin/schedules', $data);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['doctor_profile_id']);
+    }
+
     public function test_doctor_can_view_own_schedule(): void
     {
         DoctorSchedule::create([
@@ -134,5 +190,56 @@ class DoctorScheduleTest extends TestCase
             'slot_duration_minutes' => 60,
             'is_active' => false
         ]);
+    }
+
+    public function test_admin_cannot_update_to_overlap_existing(): void
+    {
+        DoctorSchedule::create([
+            'doctor_profile_id' => $this->doctorProfile->id,
+            'day_of_week' => 5,
+            'start_time' => '09:00',
+            'end_time' => '12:00',
+            'slot_duration_minutes' => 30
+        ]);
+
+        $schedule2 = DoctorSchedule::create([
+            'doctor_profile_id' => $this->doctorProfile->id,
+            'day_of_week' => 5,
+            'start_time' => '13:00',
+            'end_time' => '15:00',
+            'slot_duration_minutes' => 30
+        ]);
+
+        $response = $this->actingAs($this->admin)->putJson("/api/admin/schedules/{$schedule2->id}", [
+            'doctor_profile_id' => $this->doctorProfile->id,
+            'day_of_week' => 5,
+            'start_time' => '11:00', // Overlaps with the first one
+            'end_time' => '13:00',
+            'slot_duration_minutes' => 30
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJsonValidationErrors(['start_time']);
+    }
+
+    public function test_admin_can_update_same_schedule_without_overlap_error(): void
+    {
+        $schedule = DoctorSchedule::create([
+            'doctor_profile_id' => $this->doctorProfile->id,
+            'day_of_week' => 6,
+            'start_time' => '09:00',
+            'end_time' => '12:00',
+            'slot_duration_minutes' => 30
+        ]);
+
+        $response = $this->actingAs($this->admin)->putJson("/api/admin/schedules/{$schedule->id}", [
+            'doctor_profile_id' => $this->doctorProfile->id,
+            'day_of_week' => 6,
+            'start_time' => '09:00',
+            'end_time' => '13:00', // Just changing end time
+            'slot_duration_minutes' => 30
+        ]);
+
+        $response->assertStatus(200);
     }
 }

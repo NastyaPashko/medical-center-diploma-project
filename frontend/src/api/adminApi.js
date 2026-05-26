@@ -112,6 +112,24 @@ const adminApi = {
     const response = await axiosClient.get('/admin/users', { params });
     return response.data;
   },
+
+  // Schedules
+  getSchedules: async () => {
+    const response = await axiosClient.get('/admin/schedules');
+    return response.data;
+  },
+  createSchedule: async (data) => {
+    const response = await axiosClient.post('/admin/schedules', data);
+    return response.data;
+  },
+  updateSchedule: async (id, data) => {
+    const response = await axiosClient.put(`/admin/schedules/${id}`, data);
+    return response.data;
+  },
+  deleteSchedule: async (id) => {
+    const response = await axiosClient.delete(`/admin/schedules/${id}`);
+    return response.data;
+  },
 };
 
 export default adminApi;

@@ -63,7 +63,10 @@ class AdminDoctorScheduleController extends Controller
                 'message' => 'Schedule updated successfully',
                 'data' => new DoctorScheduleResource($schedule)
             ]);
-        } catch (\Exception $e) {
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException|\Exception $e) {
+            if ($e instanceof \Illuminate\Validation\ValidationException) {
+                throw $e;
+            }
             return response()->json(['message' => $e->getMessage()], 404);
         }
     }

@@ -46,4 +46,22 @@ class DoctorScheduleRepository
     {
         return DoctorSchedule::where('doctor_profile_id', $doctorProfileId)->get();
     }
+
+    public function hasOverlappingSchedule(int $doctorProfileId, int $dayOfWeek, string $startTime, string $endTime, ?int $excludeId = null): bool
+    {
+        $query = DoctorSchedule::where('doctor_profile_id', $doctorProfileId)
+            ->where('day_of_week', $dayOfWeek)
+            ->where(function ($q) use ($startTime, $endTime) {
+                $q->where(function ($inner) use ($startTime, $endTime) {
+                    $inner->where('start_time', '<', $endTime)
+                        ->where('end_time', '>', $startTime);
+                });
+            });
+
+        if ($excludeId) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->exists();
+    }
 }

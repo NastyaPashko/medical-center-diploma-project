@@ -4,6 +4,7 @@ import AdminPatientsPage from './PatientsPage';
 import AdminDepartmentsPage from './DepartmentsPage';
 import AdminSpecializationsPage from './SpecializationsPage';
 import AdminServicesPage from './ServicesPage';
+import AdminSchedulesPage from './SchedulesPage';
 import PlaceholderPage from '../PlaceholderPage';
 
 export {
@@ -13,9 +14,9 @@ export {
   AdminDepartmentsPage,
   AdminSpecializationsPage,
   AdminServicesPage,
+  AdminSchedulesPage,
 };
 
-export const AdminSchedulesPage = () => <PlaceholderPage title="Manage Schedules" />;
 export const AdminAppointmentsPage = () => <PlaceholderPage title="Manage Appointments" />;
 export const AdminPaymentsPage = () => <PlaceholderPage title="Manage Payments" />;
 export const AdminStatisticsPage = () => <PlaceholderPage title="System Statistics" />;

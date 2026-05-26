@@ -24,10 +24,20 @@ class DoctorScheduleRequest extends FormRequest
     {
         return [
             'doctor_profile_id' => 'required|exists:doctor_profiles,id',
-            'day_of_week' => 'required|integer|min:0|max:6',
+            'day_of_week' => 'required|integer|min:1|max:7',
             'start_time' => 'required|date_format:H:i',
             'end_time' => 'required|date_format:H:i|after:start_time',
-            'slot_duration_minutes' => 'required|integer|min:5|max:120',
+            'slot_duration_minutes' => [
+                'required',
+                'integer',
+                'min:10',
+                'max:120',
+                function ($attribute, $value, $fail) {
+                    if ($value % 5 !== 0) {
+                        $fail('The ' . $attribute . ' must be divisible by 5.');
+                    }
+                },
+            ],
             'is_active' => 'boolean',
         ];
     }

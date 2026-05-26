@@ -34,4 +34,9 @@ class DoctorProfile extends Model
     {
         return $this->belongsTo(Specialization::class);
     }
+
+    public function schedules()
+    {
+        return $this->hasMany(DoctorSchedule::class);
+    }
 }

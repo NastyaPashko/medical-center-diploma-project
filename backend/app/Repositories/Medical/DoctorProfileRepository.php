@@ -37,6 +37,11 @@ class DoctorProfileRepository
         return DoctorProfile::with(['user', 'department', 'specialization'])->find($id);
     }
 
+    public function findByUserId(int $userId): ?DoctorProfile
+    {
+        return DoctorProfile::where('user_id', $userId)->first();
+    }
+
     public function create(array $data): DoctorProfile
     {
         return DoctorProfile::create([

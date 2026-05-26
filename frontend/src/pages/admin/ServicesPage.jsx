@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -37,6 +38,7 @@ import adminApi from '../../api/adminApi';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 const AdminServicesPage = () => {
+  const { t } = useTranslation();
   const [services, setServices] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [specializations, setSpecializations] = useState([]);
@@ -70,7 +72,7 @@ const AdminServicesPage = () => {
       setSpecializations(specRes.data || []);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch data');
+      setError(t('common.error'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -135,7 +137,7 @@ const AdminServicesPage = () => {
       handleClose();
       fetchData();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save service');
+      setError(err.response?.data?.message || t('common.error'));
     } finally {
       setSubmitting(false);
     }
@@ -153,7 +155,7 @@ const AdminServicesPage = () => {
       setConfirmOpen(false);
       setServiceToDelete(null);
     } catch {
-      setError('Failed to delete service');
+      setError(t('common.error'));
       setConfirmOpen(false);
     }
   };
@@ -166,7 +168,7 @@ const AdminServicesPage = () => {
     <Box sx={{ py: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" fontWeight="700" color="text.primary">
-          Manage Medical Services
+          {t('admin.services.manage')}
         </Typography>
         <Box>
           <IconButton onClick={fetchData} sx={{ mr: 1 }}>
@@ -178,7 +180,7 @@ const AdminServicesPage = () => {
             onClick={() => handleOpen()}
             disabled={departments.length === 0}
           >
-            Add Service
+            {t('admin.services.add')}
           </Button>
         </Box>
       </Box>
@@ -187,12 +189,12 @@ const AdminServicesPage = () => {
         <Table>
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
-              <TableCell fontWeight="bold">Name</TableCell>
-              <TableCell>Department / Specialization</TableCell>
-              <TableCell>Price</TableCell>
-              <TableCell>Duration</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell fontWeight="bold">{t('common.name')}</TableCell>
+              <TableCell>{t('common.department')} / {t('common.specialization')}</TableCell>
+              <TableCell>{t('admin.services.price')}</TableCell>
+              <TableCell>{t('admin.services.duration')}</TableCell>
+              <TableCell>{t('common.status')}</TableCell>
+              <TableCell align="right">{t('common.actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -205,7 +207,7 @@ const AdminServicesPage = () => {
             ) : services.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
-                  No services found.
+                  {t('admin.services.no_services')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -216,27 +218,27 @@ const AdminServicesPage = () => {
                     <Typography variant="caption" color="text.secondary">{service.description}</Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2">{service.department?.name || 'N/A'}</Typography>
-                    <Typography variant="caption" color="text.secondary">{service.specialization?.name || 'All specializations'}</Typography>
+                    <Typography variant="body2">{service.department?.name || t('common.not_available')}</Typography>
+                    <Typography variant="caption" color="text.secondary">{service.specialization?.name || t('admin.services.all_specializations')}</Typography>
                   </TableCell>
                   <TableCell>${service.price}</TableCell>
-                  <TableCell>{service.duration_minutes} min</TableCell>
+                  <TableCell>{t('admin.services.duration_min', { count: service.duration_minutes })}</TableCell>
                   <TableCell>
                     <Alert 
                       severity={service.is_active ? "success" : "error"} 
                       icon={false}
                       sx={{ py: 0, px: 1, display: 'inline-flex' }}
                     >
-                      {service.is_active ? 'Active' : 'Inactive'}
+                      {service.is_active ? t('common.active') : t('common.inactive')}
                     </Alert>
                   </TableCell>
                   <TableCell align="right">
-                    <Tooltip title="Edit">
+                    <Tooltip title={t('common.edit')}>
                       <IconButton onClick={() => handleOpen(service)} color="primary">
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete">
+                    <Tooltip title={t('common.delete')}>
                       <IconButton onClick={() => handleDeleteClick(service.id)} color="error">
                         <DeleteIcon />
                       </IconButton>
@@ -252,13 +254,13 @@ const AdminServicesPage = () => {
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <form onSubmit={handleSubmit}>
           <DialogTitle>
-            {editingService ? 'Edit Service' : 'Add New Service'}
+            {editingService ? t('admin.services.edit') : t('admin.services.add')}
           </DialogTitle>
           <DialogContent dividers>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <TextField
               name="name"
-              label="Service Name"
+              label={t('admin.services.name')}
               fullWidth
               required
               margin="normal"
@@ -267,7 +269,7 @@ const AdminServicesPage = () => {
             />
             <TextField
               name="description"
-              label="Description"
+              label={t('admin.departments.description')}
               fullWidth
               multiline
               rows={2}
@@ -277,13 +279,13 @@ const AdminServicesPage = () => {
             />
             
             <FormControl fullWidth margin="normal" required>
-              <InputLabel id="dept-label">Department</InputLabel>
+              <InputLabel id="dept-label">{t('common.department')}</InputLabel>
               <Select
                 labelId="dept-label"
                 name="department_id"
                 value={formData.department_id}
                 onChange={handleChange}
-                label="Department"
+                label={t('common.department')}
               >
                 {departments.map((dept) => (
                   <MenuItem key={dept.id} value={dept.id}>
@@ -294,15 +296,15 @@ const AdminServicesPage = () => {
             </FormControl>
 
             <FormControl fullWidth margin="normal">
-              <InputLabel id="spec-label">Specialization (Optional)</InputLabel>
+              <InputLabel id="spec-label">{t('common.specialization')} ({t('admin.services.none_general')})</InputLabel>
               <Select
                 labelId="spec-label"
                 name="specialization_id"
                 value={formData.specialization_id}
                 onChange={handleChange}
-                label="Specialization (Optional)"
+                label={`${t('common.specialization')} (${t('admin.services.none_general')})`}
               >
-                <MenuItem value=""><em>None (General Service)</em></MenuItem>
+                <MenuItem value=""><em>{t('admin.services.none_general')}</em></MenuItem>
                 {filteredSpecializations.map((spec) => (
                   <MenuItem key={spec.id} value={spec.id}>
                     {spec.name}
@@ -314,7 +316,7 @@ const AdminServicesPage = () => {
             <Box sx={{ display: 'flex', gap: 2 }}>
               <TextField
                 name="price"
-                label="Price"
+                label={t('admin.services.price')}
                 type="number"
                 fullWidth
                 required
@@ -327,7 +329,7 @@ const AdminServicesPage = () => {
               />
               <TextField
                 name="duration_minutes"
-                label="Duration (minutes)"
+                label={t('admin.services.duration')}
                 type="number"
                 fullWidth
                 required
@@ -346,18 +348,18 @@ const AdminServicesPage = () => {
                   color="primary"
                 />
               }
-              label="Is Active"
+              label={t('admin.departments.is_active')}
               sx={{ mt: 2 }}
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleClose}>{t('common.cancel')}</Button>
             <Button 
               type="submit" 
               variant="contained" 
               disabled={submitting}
             >
-              {submitting ? 'Saving...' : 'Save'}
+              {submitting ? t('common.loading') : t('common.save')}
             </Button>
           </DialogActions>
         </form>
@@ -365,11 +367,11 @@ const AdminServicesPage = () => {
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Confirm Deactivation"
-        message="Are you sure you want to deactivate/delete this medical service?"
+        title={t('common.delete')}
+        message={t('admin.services.confirm_delete')}
         onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmOpen(false)}
-        confirmText="Deactivate"
+        confirmText={t('common.delete')}
         confirmColor="error"
       />
     </Box>

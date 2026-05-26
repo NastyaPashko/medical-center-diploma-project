@@ -122,7 +122,7 @@ const Sidebar = ({
               {user?.name || 'User'}
             </Typography>
             <Typography variant="caption" color="text.secondary" noWrap sx={{ display: 'block' }}>
-              {user?.role || 'Patient'}
+              {user?.role ? t(`roles.${user.role.toLowerCase()}`) : t('roles.patient')}
             </Typography>
           </Box>
         </Paper>

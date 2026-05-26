@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -32,6 +33,7 @@ import { Avatar } from '@mui/material';
 import adminApi from '../../api/adminApi';
 
 const AdminPatientsPage = () => {
+  const { t } = useTranslation();
   const [patients, setPatients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -59,7 +61,7 @@ const AdminPatientsPage = () => {
       setPatients(response.data || []);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch patients');
+      setError(t('common.error'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -135,7 +137,7 @@ const AdminPatientsPage = () => {
       handleClose();
       fetchPatients();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update patient profile');
+      setError(err.response?.data?.message || t('common.error'));
     } finally {
       setSubmitting(false);
     }
@@ -145,7 +147,7 @@ const AdminPatientsPage = () => {
     <Box sx={{ py: 1 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" fontWeight="700" color="text.primary">
-          Manage Patients
+          {t('admin.patients.manage')}
         </Typography>
         <IconButton onClick={fetchPatients}>
           <RefreshIcon />
@@ -157,12 +159,12 @@ const AdminPatientsPage = () => {
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
               <TableCell padding="checkbox" sx={{ pl: 2 }}></TableCell>
-              <TableCell fontWeight="bold">Patient</TableCell>
-              <TableCell>Phone</TableCell>
-              <TableCell>Insurance</TableCell>
-              <TableCell>Gender</TableCell>
-              <TableCell>Birth Date</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell fontWeight="bold">{t('sidebar.patients')}</TableCell>
+              <TableCell>{t('admin.departments.phone')}</TableCell>
+              <TableCell>{t('admin.patients.insurance')}</TableCell>
+              <TableCell>{t('admin.patients.gender')}</TableCell>
+              <TableCell>{t('admin.patients.date_of_birth')}</TableCell>
+              <TableCell align="right">{t('common.actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -175,7 +177,7 @@ const AdminPatientsPage = () => {
             ) : patients.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} align="center" sx={{ py: 3 }}>
-                  No patients found.
+                  {t('admin.patients.no_patients')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -198,20 +200,20 @@ const AdminPatientsPage = () => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    {patient.user?.phone || 'N/A'}
+                    {patient.user?.phone || t('common.not_available')}
                   </TableCell>
-                  <TableCell>{patient.insurance_number || 'N/A'}</TableCell>
-                  <TableCell>{patient.gender ? (patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)) : 'N/A'}</TableCell>
+                  <TableCell>{patient.insurance_number || t('common.not_available')}</TableCell>
+                  <TableCell>{patient.gender ? (patient.gender.charAt(0).toUpperCase() + patient.gender.slice(1)) : t('common.not_available')}</TableCell>
                   <TableCell>
-                    {patient.date_of_birth ? new Date(patient.date_of_birth).toLocaleDateString() : 'N/A'}
+                    {patient.date_of_birth ? new Date(patient.date_of_birth).toLocaleDateString() : t('common.not_available')}
                   </TableCell>
                   <TableCell align="right">
-                    <Tooltip title="View Details">
+                    <Tooltip title={t('doctor.view_details')}>
                       <IconButton onClick={() => handleOpenView(patient)} color="info">
                         <ViewIcon />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Edit Profile">
+                    <Tooltip title={t('common.edit')}>
                       <IconButton onClick={() => handleOpenEdit(patient)} color="primary">
                         <EditIcon />
                       </IconButton>
@@ -226,7 +228,7 @@ const AdminPatientsPage = () => {
 
       {/* View Dialog */}
       <Dialog open={viewOpen} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>Patient Details</DialogTitle>
+        <DialogTitle>{t('admin.patients.details')}</DialogTitle>
         <DialogContent dividers>
           {selectedPatient && (
             <Grid container spacing={2}>
@@ -244,53 +246,53 @@ const AdminPatientsPage = () => {
               </Grid>
               <Grid item xs={12}><Divider /></Grid>
               <Grid item xs={6}>
-                <Typography variant="subtitle2" color="text.secondary">Phone</Typography>
-                <Typography variant="body1">{selectedPatient.user?.phone || 'N/A'}</Typography>
+                <Typography variant="subtitle2" color="text.secondary">{t('admin.departments.phone')}</Typography>
+                <Typography variant="body1">{selectedPatient.user?.phone || t('common.not_available')}</Typography>
               </Grid>
               <Grid item xs={6}>
-                <Typography variant="subtitle2" color="text.secondary">Gender</Typography>
-                <Typography variant="body1">{selectedPatient.gender || 'N/A'}</Typography>
+                <Typography variant="subtitle2" color="text.secondary">{t('admin.patients.gender')}</Typography>
+                <Typography variant="body1">{selectedPatient.gender || t('common.not_available')}</Typography>
               </Grid>
               <Grid item xs={12}><Divider /></Grid>
               <Grid item xs={6}>
-                <Typography variant="subtitle2" color="text.secondary">Date of Birth</Typography>
+                <Typography variant="subtitle2" color="text.secondary">{t('admin.patients.date_of_birth')}</Typography>
                 <Typography variant="body1">
-                  {selectedPatient.date_of_birth ? new Date(selectedPatient.date_of_birth).toLocaleDateString() : 'N/A'}
+                  {selectedPatient.date_of_birth ? new Date(selectedPatient.date_of_birth).toLocaleDateString() : t('common.not_available')}
                 </Typography>
               </Grid>
               <Grid item xs={6}>
-                <Typography variant="subtitle2" color="text.secondary">Insurance Number</Typography>
-                <Typography variant="body1">{selectedPatient.insurance_number || 'N/A'}</Typography>
+                <Typography variant="subtitle2" color="text.secondary">{t('admin.patients.insurance')}</Typography>
+                <Typography variant="body1">{selectedPatient.insurance_number || t('common.not_available')}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="subtitle2" color="text.secondary">Address</Typography>
-                <Typography variant="body1">{selectedPatient.address || 'N/A'}</Typography>
+                <Typography variant="subtitle2" color="text.secondary">{t('admin.patients.address')}</Typography>
+                <Typography variant="body1">{selectedPatient.address || t('common.not_available')}</Typography>
               </Grid>
               <Grid item xs={12}><Divider /></Grid>
               <Grid item xs={6}>
-                <Typography variant="subtitle2" color="text.secondary">Emergency Contact</Typography>
-                <Typography variant="body1">{selectedPatient.emergency_contact_name || 'N/A'}</Typography>
+                <Typography variant="subtitle2" color="text.secondary">{t('admin.patients.emergency_contact')}</Typography>
+                <Typography variant="body1">{selectedPatient.emergency_contact_name || t('common.not_available')}</Typography>
               </Grid>
               <Grid item xs={6}>
-                <Typography variant="subtitle2" color="text.secondary">Emergency Phone</Typography>
-                <Typography variant="body1">{selectedPatient.emergency_contact_phone || 'N/A'}</Typography>
+                <Typography variant="subtitle2" color="text.secondary">{t('admin.patients.emergency_phone')}</Typography>
+                <Typography variant="body1">{selectedPatient.emergency_contact_phone || t('common.not_available')}</Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography variant="subtitle2" color="text.secondary">Medical Notes</Typography>
-                <Typography variant="body1">{selectedPatient.notes || 'No notes available'}</Typography>
+                <Typography variant="subtitle2" color="text.secondary">{t('admin.patients.medical_notes')}</Typography>
+                <Typography variant="body1">{selectedPatient.notes || t('admin.patients.no_notes')}</Typography>
               </Grid>
             </Grid>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
+          <Button onClick={handleClose}>{t('common.cancel')}</Button>
         </DialogActions>
       </Dialog>
 
       {/* Edit Dialog */}
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <form onSubmit={handleSubmit}>
-          <DialogTitle>Edit Patient Profile</DialogTitle>
+          <DialogTitle>{t('common.edit')}</DialogTitle>
           <DialogContent dividers>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 3 }}>
@@ -323,14 +325,14 @@ const AdminPatientsPage = () => {
                 accept="image/*"
               />
               <Typography variant="caption" color="text.secondary">
-                Patient Profile Photo
+                {t('admin.patients.profile_photo')}
               </Typography>
             </Box>
             <Grid container spacing={2}>
               <Grid item xs={6}>
                 <TextField
                   name="date_of_birth"
-                  label="Date of Birth"
+                  label={t('admin.patients.date_of_birth')}
                   type="date"
                   fullWidth
                   margin="normal"
@@ -342,7 +344,7 @@ const AdminPatientsPage = () => {
               <Grid item xs={6}>
                 <TextField
                   name="gender"
-                  label="Gender"
+                  label={t('admin.patients.gender')}
                   fullWidth
                   margin="normal"
                   value={formData.gender}
@@ -353,7 +355,7 @@ const AdminPatientsPage = () => {
               <Grid item xs={12}>
                 <TextField
                   name="insurance_number"
-                  label="Insurance Number"
+                  label={t('admin.patients.insurance')}
                   fullWidth
                   margin="normal"
                   value={formData.insurance_number}
@@ -363,7 +365,7 @@ const AdminPatientsPage = () => {
               <Grid item xs={12}>
                 <TextField
                   name="address"
-                  label="Address"
+                  label={t('admin.patients.address')}
                   fullWidth
                   multiline
                   rows={2}
@@ -375,7 +377,7 @@ const AdminPatientsPage = () => {
               <Grid item xs={6}>
                 <TextField
                   name="emergency_contact_name"
-                  label="Emergency Contact Name"
+                  label={t('admin.patients.emergency_contact')}
                   fullWidth
                   margin="normal"
                   value={formData.emergency_contact_name}
@@ -385,7 +387,7 @@ const AdminPatientsPage = () => {
               <Grid item xs={6}>
                 <TextField
                   name="emergency_contact_phone"
-                  label="Emergency Contact Phone"
+                  label={t('admin.patients.emergency_phone')}
                   fullWidth
                   margin="normal"
                   value={formData.emergency_contact_phone}
@@ -395,7 +397,7 @@ const AdminPatientsPage = () => {
               <Grid item xs={12}>
                 <TextField
                   name="notes"
-                  label="Medical Notes"
+                  label={t('admin.patients.medical_notes')}
                   fullWidth
                   multiline
                   rows={3}
@@ -407,13 +409,13 @@ const AdminPatientsPage = () => {
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleClose}>{t('common.cancel')}</Button>
             <Button 
               type="submit" 
               variant="contained" 
               disabled={submitting}
             >
-              {submitting ? 'Updating...' : 'Update Profile'}
+              {submitting ? t('common.loading') : t('common.save')}
             </Button>
           </DialogActions>
         </form>

@@ -1,7 +1,9 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Typography, Paper, Box } from '@mui/material';
 
 const PlaceholderPage = ({ title }) => {
+  const { t } = useTranslation();
   return (
     <Box sx={{ py: 1 }}>
       <Typography variant="h4" fontWeight="700" color="text.primary" gutterBottom sx={{ mb: 3 }}>
@@ -18,11 +20,10 @@ const PlaceholderPage = ({ title }) => {
         }}
       >
         <Typography variant="h6" color="text.secondary" gutterBottom>
-          Module Under Development
+          {t('common.under_development')}
         </Typography>
         <Typography variant="body1" color="text.secondary">
-          The {title} functionality will be implemented in the upcoming updates. 
-          This module will allow you to manage your medical records and interactions more efficiently.
+          {t('common.placeholder_text', { title })}
         </Typography>
       </Paper>
     </Box>

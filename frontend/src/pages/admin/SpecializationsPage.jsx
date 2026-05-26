@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -36,6 +37,7 @@ import adminApi from '../../api/adminApi';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 const AdminSpecializationsPage = () => {
+  const { t } = useTranslation();
   const [specializations, setSpecializations] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -63,7 +65,7 @@ const AdminSpecializationsPage = () => {
       setDepartments(deptRes.data || []);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch data');
+      setError(t('common.error'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -122,7 +124,7 @@ const AdminSpecializationsPage = () => {
       handleClose();
       fetchData();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save specialization');
+      setError(err.response?.data?.message || t('common.error'));
     } finally {
       setSubmitting(false);
     }
@@ -140,7 +142,7 @@ const AdminSpecializationsPage = () => {
       setConfirmOpen(false);
       setSpecToDelete(null);
     } catch {
-      setError('Failed to delete specialization');
+      setError(t('common.error'));
       setConfirmOpen(false);
     }
   };
@@ -149,7 +151,7 @@ const AdminSpecializationsPage = () => {
     <Box sx={{ py: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" fontWeight="700" color="text.primary">
-          Manage Specializations
+          {t('admin.specializations.manage')}
         </Typography>
         <Box>
           <IconButton onClick={fetchData} sx={{ mr: 1 }}>
@@ -161,14 +163,14 @@ const AdminSpecializationsPage = () => {
             onClick={() => handleOpen()}
             disabled={departments.length === 0}
           >
-            Add Specialization
+            {t('admin.specializations.add')}
           </Button>
         </Box>
       </Box>
 
       {departments.length === 0 && !loading && (
         <Alert severity="warning" sx={{ mb: 2 }}>
-          You need to create at least one department before adding specializations.
+          {t('doctor.select_dept_first')}
         </Alert>
       )}
 
@@ -176,11 +178,11 @@ const AdminSpecializationsPage = () => {
         <Table>
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
-              <TableCell fontWeight="bold">Name</TableCell>
-              <TableCell>Department</TableCell>
-              <TableCell>Description</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell fontWeight="bold">{t('common.name')}</TableCell>
+              <TableCell>{t('common.department')}</TableCell>
+              <TableCell>{t('admin.departments.description')}</TableCell>
+              <TableCell>{t('common.status')}</TableCell>
+              <TableCell align="right">{t('common.actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -193,14 +195,14 @@ const AdminSpecializationsPage = () => {
             ) : specializations.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
-                  No specializations found.
+                  {t('admin.specializations.no_specializations')}
                 </TableCell>
               </TableRow>
             ) : (
               specializations.map((spec) => (
                 <TableRow key={spec.id}>
                   <TableCell fontWeight="medium">{spec.name}</TableCell>
-                  <TableCell>{spec.department?.name || 'N/A'}</TableCell>
+                  <TableCell>{spec.department?.name || t('common.not_available')}</TableCell>
                   <TableCell>{spec.description}</TableCell>
                   <TableCell>
                     <Alert 
@@ -208,16 +210,16 @@ const AdminSpecializationsPage = () => {
                       icon={false}
                       sx={{ py: 0, px: 1, display: 'inline-flex' }}
                     >
-                      {spec.is_active ? 'Active' : 'Inactive'}
+                      {spec.is_active ? t('common.active') : t('common.inactive')}
                     </Alert>
                   </TableCell>
                   <TableCell align="right">
-                    <Tooltip title="Edit">
+                    <Tooltip title={t('common.edit')}>
                       <IconButton onClick={() => handleOpen(spec)} color="primary">
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete">
+                    <Tooltip title={t('common.delete')}>
                       <IconButton onClick={() => handleDeleteClick(spec.id)} color="error">
                         <DeleteIcon />
                       </IconButton>
@@ -233,13 +235,13 @@ const AdminSpecializationsPage = () => {
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
         <form onSubmit={handleSubmit}>
           <DialogTitle>
-            {editingSpec ? 'Edit Specialization' : 'Add New Specialization'}
+            {editingSpec ? t('admin.specializations.edit') : t('admin.specializations.add')}
           </DialogTitle>
           <DialogContent dividers>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
             <TextField
               name="name"
-              label="Specialization Name"
+              label={t('admin.specializations.name')}
               fullWidth
               required
               margin="normal"
@@ -248,13 +250,13 @@ const AdminSpecializationsPage = () => {
             />
             
             <FormControl fullWidth margin="normal" required>
-              <InputLabel id="dept-label">Department</InputLabel>
+              <InputLabel id="dept-label">{t('common.department')}</InputLabel>
               <Select
                 labelId="dept-label"
                 name="department_id"
                 value={formData.department_id}
                 onChange={handleChange}
-                label="Department"
+                label={t('common.department')}
               >
                 {departments.map((dept) => (
                   <MenuItem key={dept.id} value={dept.id}>
@@ -266,7 +268,7 @@ const AdminSpecializationsPage = () => {
 
             <TextField
               name="description"
-              label="Description"
+              label={t('admin.departments.description')}
               fullWidth
               multiline
               rows={3}
@@ -283,18 +285,18 @@ const AdminSpecializationsPage = () => {
                   color="primary"
                 />
               }
-              label="Is Active"
+              label={t('admin.departments.is_active')}
               sx={{ mt: 2 }}
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleClose}>{t('common.cancel')}</Button>
             <Button 
               type="submit" 
               variant="contained" 
               disabled={submitting}
             >
-              {submitting ? 'Saving...' : 'Save'}
+              {submitting ? t('common.loading') : t('common.save')}
             </Button>
           </DialogActions>
         </form>
@@ -302,11 +304,11 @@ const AdminSpecializationsPage = () => {
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Confirm Deactivation"
-        message="Are you sure you want to deactivate/delete this specialization? This may affect linked services."
+        title={t('common.delete')}
+        message={t('admin.specializations.confirm_delete')}
         onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmOpen(false)}
-        confirmText="Deactivate"
+        confirmText={t('common.delete')}
         confirmColor="error"
       />
     </Box>

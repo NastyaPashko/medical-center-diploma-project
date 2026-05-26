@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Box,
   Typography,
@@ -38,6 +39,7 @@ import adminApi from '../../api/adminApi';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 
 const AdminDoctorsPage = () => {
+  const { t } = useTranslation();
   const [doctors, setDoctors] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [specializations, setSpecializations] = useState([]);
@@ -77,7 +79,7 @@ const AdminDoctorsPage = () => {
       setSpecializations(specRes.data || []);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch data');
+      setError(t('common.error'));
       console.error(err);
     } finally {
       setLoading(false);
@@ -165,7 +167,7 @@ const AdminDoctorsPage = () => {
       handleClose();
       fetchData();
     } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save doctor profile');
+      setError(err.response?.data?.message || t('common.error'));
     } finally {
       setSubmitting(false);
     }
@@ -183,7 +185,7 @@ const AdminDoctorsPage = () => {
       setConfirmOpen(false);
       setDoctorToDelete(null);
     } catch {
-      setError('Failed to delete doctor profile');
+      setError(t('common.error'));
       setConfirmOpen(false);
     }
   };
@@ -197,7 +199,7 @@ const AdminDoctorsPage = () => {
     <Box sx={{ py: 3 }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
         <Typography variant="h4" fontWeight="700" color="text.primary">
-          Manage Doctors
+          {t('doctor.manage_doctors')}
         </Typography>
         <Box>
           <IconButton onClick={fetchData} sx={{ mr: 1 }}>
@@ -209,7 +211,7 @@ const AdminDoctorsPage = () => {
             onClick={() => handleOpen()}
             sx={{ borderRadius: 2 }}
           >
-            Add Doctor
+            {t('doctor.add_doctor')}
           </Button>
         </Box>
       </Box>
@@ -218,12 +220,12 @@ const AdminDoctorsPage = () => {
         <Table>
           <TableHead sx={{ bgcolor: 'grey.50' }}>
             <TableRow>
-              <TableCell fontWeight="bold">Doctor</TableCell>
-              <TableCell>Specialization</TableCell>
-              <TableCell>Experience</TableCell>
-              <TableCell>Consultation</TableCell>
-              <TableCell>Availability</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell fontWeight="bold">{t('sidebar.doctors')}</TableCell>
+              <TableCell>{t('common.specialization')}</TableCell>
+              <TableCell>{t('doctor.experience')}</TableCell>
+              <TableCell>{t('doctor.price')}</TableCell>
+              <TableCell>{t('common.status')}</TableCell>
+              <TableCell align="right">{t('common.actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -236,7 +238,7 @@ const AdminDoctorsPage = () => {
             ) : doctors.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
-                  No doctors found.
+                  {t('common.no_doctors_found')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -251,10 +253,10 @@ const AdminDoctorsPage = () => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    <Typography variant="body2">{doctor.specialization?.name || 'N/A'}</Typography>
+                    <Typography variant="body2">{doctor.specialization?.name || t('common.not_available')}</Typography>
                     <Typography variant="caption" color="text.secondary">{doctor.department?.name}</Typography>
                   </TableCell>
-                  <TableCell>{doctor.experience_years} years</TableCell>
+                  <TableCell>{t('doctor.experience_years', { years: doctor.experience_years })}</TableCell>
                   <TableCell>${doctor.consultation_price}</TableCell>
                   <TableCell>
                     <Alert 
@@ -262,16 +264,16 @@ const AdminDoctorsPage = () => {
                       icon={false}
                       sx={{ py: 0, px: 1, display: 'inline-flex' }}
                     >
-                      {doctor.is_available ? 'Available' : 'Unavailable'}
+                      {doctor.is_available ? t('doctor.available') : t('doctor.unavailable')}
                     </Alert>
                   </TableCell>
                   <TableCell align="right">
-                    <Tooltip title="Edit">
+                    <Tooltip title={t('common.edit')}>
                       <IconButton onClick={() => handleOpen(doctor)} color="primary">
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete">
+                    <Tooltip title={t('common.delete')}>
                       <IconButton onClick={() => handleDeleteClick(doctor.id)} color="error">
                         <DeleteIcon />
                       </IconButton>
@@ -287,7 +289,7 @@ const AdminDoctorsPage = () => {
       <Dialog open={open} onClose={handleClose} maxWidth="md" fullWidth>
         <form onSubmit={handleSubmit}>
           <DialogTitle>
-            {editingDoctor ? `Edit Profile: ${editingDoctor.user?.name}` : 'Create Doctor Profile'}
+            {editingDoctor ? `${t('common.edit')}: ${editingDoctor.user?.name}` : t('doctor.add_doctor')}
           </DialogTitle>
           <DialogContent dividers sx={{ pt: 2 }}>
             {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
@@ -295,7 +297,7 @@ const AdminDoctorsPage = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   name="name"
-                  label="Doctor's Full Name"
+                  label={t('doctor.doctor_name')}
                   fullWidth
                   required
                   value={formData.name}
@@ -306,7 +308,7 @@ const AdminDoctorsPage = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   name="email"
-                  label="Email Address"
+                  label={t('auth.email')}
                   type="email"
                   fullWidth
                   required
@@ -318,7 +320,7 @@ const AdminDoctorsPage = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   name="phone"
-                  label="Phone Number"
+                  label={t('auth.phone')}
                   fullWidth
                   required
                   value={formData.phone}
@@ -330,26 +332,26 @@ const AdminDoctorsPage = () => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     name="password"
-                    label="Initial Password"
+                    label={t('doctor.initial_password')}
                     type="password"
                     fullWidth
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    placeholder="At least 8 characters"
+                    placeholder={t('doctor.password_hint')}
                   />
                 </Grid>
               )}
               
               <Grid item xs={12}>
                 <FormControl fullWidth required>
-                  <InputLabel id="department-select-label">Select Department</InputLabel>
+                  <InputLabel id="department-select-label">{t('doctor.select_department')}</InputLabel>
                   <Select
                     labelId="department-select-label"
                     name="department_id"
                     value={formData.department_id}
                     onChange={handleChange}
-                    label="Select Department"
+                    label={t('doctor.select_department')}
                     MenuProps={{ 
                       PaperProps: { 
                         sx: { maxHeight: 300 } 
@@ -368,13 +370,13 @@ const AdminDoctorsPage = () => {
 
               <Grid item xs={12}>
                 <FormControl fullWidth required disabled={!formData.department_id}>
-                  <InputLabel id="specialization-select-label">Select Specialization</InputLabel>
+                  <InputLabel id="specialization-select-label">{t('doctor.select_specialization')}</InputLabel>
                   <Select
                     labelId="specialization-select-label"
                     name="specialization_id"
                     value={formData.specialization_id}
                     onChange={handleChange}
-                    label="Select Specialization"
+                    label={t('doctor.select_specialization')}
                     MenuProps={{ 
                       PaperProps: { 
                         sx: { maxHeight: 300 } 
@@ -384,7 +386,7 @@ const AdminDoctorsPage = () => {
                   >
                     {filteredSpecializations.length === 0 ? (
                       <MenuItem disabled value="">
-                        {formData.department_id ? "No specializations found" : "Select a department first"}
+                        {formData.department_id ? t('doctor.no_specializations') : t('doctor.select_dept_first')}
                       </MenuItem>
                     ) : (
                       filteredSpecializations.map((spec) => (
@@ -400,7 +402,7 @@ const AdminDoctorsPage = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   name="experience_years"
-                  label="Experience (years)"
+                  label={t('doctor.experience_years_label')}
                   type="number"
                   fullWidth
                   value={formData.experience_years}
@@ -412,7 +414,7 @@ const AdminDoctorsPage = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   name="consultation_price"
-                  label="Consultation Price"
+                  label={t('doctor.consultation_price_label')}
                   type="number"
                   fullWidth
                   required
@@ -428,7 +430,7 @@ const AdminDoctorsPage = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   name="education"
-                  label="Education"
+                  label={t('doctor.education')}
                   fullWidth
                   value={formData.education}
                   onChange={handleChange}
@@ -438,7 +440,7 @@ const AdminDoctorsPage = () => {
               <Grid item xs={12} md={6}>
                 <TextField
                   name="office_number"
-                  label="Office Number"
+                  label={t('doctor.office')}
                   fullWidth
                   value={formData.office_number}
                   onChange={handleChange}
@@ -448,7 +450,7 @@ const AdminDoctorsPage = () => {
               <Grid item xs={12}>
                 <TextField
                   name="bio"
-                  label="Biography"
+                  label={t('doctor.bio')}
                   fullWidth
                   multiline
                   rows={4}
@@ -467,19 +469,19 @@ const AdminDoctorsPage = () => {
                       color="primary"
                     />
                   }
-                  label="Is Available for Consultations"
+                  label={t('doctor.is_available_label')}
                 />
               </Grid>
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleClose}>{t('common.cancel')}</Button>
             <Button 
               type="submit" 
               variant="contained" 
               disabled={submitting}
             >
-              {submitting ? 'Saving...' : 'Save'}
+              {submitting ? t('common.loading') : t('common.save')}
             </Button>
           </DialogActions>
         </form>
@@ -487,11 +489,11 @@ const AdminDoctorsPage = () => {
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Confirm Deletion"
-        message="Are you sure you want to delete this doctor profile? This action cannot be undone."
+        title={t('common.delete')}
+        message={t('doctor.confirm_delete_doctor')}
         onConfirm={handleConfirmDelete}
         onCancel={() => setConfirmOpen(false)}
-        confirmText="Delete"
+        confirmText={t('common.delete')}
         confirmColor="error"
       />
     </Box>

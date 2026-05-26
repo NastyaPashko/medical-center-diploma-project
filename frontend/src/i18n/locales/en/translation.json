@@ -25,6 +25,8 @@
     "not_available": "N/A",
     "logout": "Logout",
     "profile": "Profile",
+    "complete": "Complete",
+    "view_details": "View Details",
     "under_development": "Module Under Development",
     "placeholder_text": "The {{title}} functionality will be implemented in the upcoming updates. This module will allow you to manage your medical records and interactions more efficiently.",
     "coming_soon": "Coming Soon",
@@ -42,7 +44,14 @@
       "health_tips": "Personalized Health Tips",
       "find_doctor": "Find a Doctor",
       "my_prescriptions": "My Prescriptions",
-      "symptom_checker": "Symptom Checker"
+      "symptom_checker": "Symptom Checker",
+      "browse_services": "Browse Services",
+      "my_appointments": "My Appointments",
+      "profile_completion": "Profile Completion",
+      "complete_profile": "Complete Profile",
+      "complete_profile_desc": "Provide more information to get better care recommendations.",
+      "recommended_services": "Recommended Services",
+      "welcome_back_text": "How are you feeling today? Check your upcoming schedule or find a specialist."
     },
     "doctor": {
       "todays_schedule": "Today's Schedule",

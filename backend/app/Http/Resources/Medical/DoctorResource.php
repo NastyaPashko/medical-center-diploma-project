@@ -12,6 +12,8 @@ class DoctorResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
+            'name' => $this->user->name ?? null,
+            'avatar_url' => isset($this->user->avatar) ? '/storage/' . $this->user->avatar : null,
             'user' => new UserResource($this->whenLoaded('user')),
             'department_id' => $this->department_id,
             'department' => new DepartmentResource($this->whenLoaded('department')),

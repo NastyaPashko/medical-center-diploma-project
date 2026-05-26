@@ -13,6 +13,8 @@ class UpdatePatientProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'name' => 'sometimes|required|string|max:255',
+            'phone' => 'nullable|string|max:30',
             'date_of_birth' => 'nullable|date|before:today',
             'gender' => 'nullable|in:male,female,other',
             'address' => 'nullable|string|max:255',

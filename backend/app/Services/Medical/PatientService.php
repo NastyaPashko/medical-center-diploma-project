@@ -34,14 +34,30 @@ class PatientService
             throw new \Exception('Patient profile not found');
         }
 
+        $user = $profile->user;
+
+        // Update basic user info
+        $userData = [];
+        if (isset($data['name'])) {
+            $userData['name'] = $data['name'];
+            unset($data['name']);
+        }
+        if (isset($data['phone'])) {
+            $userData['phone'] = $data['phone'];
+            unset($data['phone']);
+        }
+
         if (isset($data['avatar'])) {
-            $user = $profile->user;
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
             $path = $data['avatar']->store('avatars', 'public');
-            $user->update(['avatar' => $path]);
+            $userData['avatar'] = $path;
             unset($data['avatar']);
+        }
+
+        if (!empty($userData)) {
+            $user->update($userData);
         }
 
         return $this->patientProfileRepository->update($profile, $data);
@@ -54,14 +70,30 @@ class PatientService
             throw new \Exception('Patient not found');
         }
 
+        $user = $profile->user;
+
+        // Update basic user info
+        $userData = [];
+        if (isset($data['name'])) {
+            $userData['name'] = $data['name'];
+            unset($data['name']);
+        }
+        if (isset($data['phone'])) {
+            $userData['phone'] = $data['phone'];
+            unset($data['phone']);
+        }
+
         if (isset($data['avatar'])) {
-            $user = $profile->user;
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
             $path = $data['avatar']->store('avatars', 'public');
-            $user->update(['avatar' => $path]);
+            $userData['avatar'] = $path;
             unset($data['avatar']);
+        }
+
+        if (!empty($userData)) {
+            $user->update($userData);
         }
 
         return $this->patientProfileRepository->update($profile, $data);

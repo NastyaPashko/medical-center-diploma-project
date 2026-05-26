@@ -47,7 +47,7 @@ const Sidebar = ({
           }}
         >
           <DoctorIcon color="primary" />
-          MediCare Hub
+          MediCare
         </Typography>
       </Toolbar>
       <Divider sx={{ opacity: 0.5 }} />

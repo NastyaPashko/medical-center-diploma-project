@@ -13,8 +13,10 @@ import {
   IconButton
 } from '@mui/material';
 import { Save as SaveIcon, Cancel as CancelIcon, PhotoCamera as PhotoCameraIcon } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
+  const { t } = useTranslation();
   const fileInputRef = useRef(null);
   const [formData, setFormData] = useState({
     date_of_birth: profile.date_of_birth || '',
@@ -59,7 +61,7 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
   return (
     <Paper sx={{ p: 3, borderRadius: 2 }}>
       <Typography variant="h6" fontWeight="bold" mb={3}>
-        Edit Profile
+        {t('common.profile')}
       </Typography>
 
       {error && (
@@ -101,14 +103,14 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               accept="image/*"
             />
             <Typography variant="caption" color="text.secondary">
-              Click to change profile photo
+              {t('admin.patients.profile_photo')}
             </Typography>
           </Grid>
 
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Date of Birth"
+              label={t('admin.patients.date_of_birth')}
               name="date_of_birth"
               type="date"
               value={formData.date_of_birth}
@@ -121,7 +123,7 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
             <TextField
               fullWidth
               select
-              label="Gender"
+              label={t('admin.patients.gender')}
               name="gender"
               value={formData.gender}
               onChange={handleChange}
@@ -130,26 +132,26 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               }}
               sx={{ minWidth: 200 }}
             >
-              <MenuItem value="" disabled>Select Gender</MenuItem>
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
-              <MenuItem value="other">Other</MenuItem>
+              <MenuItem value="" disabled>{t('admin.patients.gender')}</MenuItem>
+              <MenuItem value="male">{t('roles.patient')} (M)</MenuItem>
+              <MenuItem value="female">{t('roles.patient')} (F)</MenuItem>
+              <MenuItem value="other">{t('common.placeholder_text', { title: '' })}</MenuItem>
             </TextField>
           </Grid>
           <Grid item xs={12}>
             <TextField
               fullWidth
-              label="Address"
+              label={t('admin.patients.address')}
               name="address"
               value={formData.address}
               onChange={handleChange}
-              placeholder="Full address"
+              placeholder={t('admin.patients.address')}
             />
           </Grid>
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Insurance Number"
+              label={t('admin.patients.insurance')}
               name="insurance_number"
               value={formData.insurance_number}
               onChange={handleChange}
@@ -158,7 +160,7 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Emergency Contact Name"
+              label={t('admin.patients.emergency_contact')}
               name="emergency_contact_name"
               value={formData.emergency_contact_name}
               onChange={handleChange}
@@ -167,7 +169,7 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
           <Grid item xs={12} sm={6}>
             <TextField
               fullWidth
-              label="Emergency Contact Phone"
+              label={t('admin.patients.emergency_phone')}
               name="emergency_contact_phone"
               value={formData.emergency_contact_phone}
               onChange={handleChange}
@@ -178,11 +180,11 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               fullWidth
               multiline
               rows={2}
-              label="Medical Notes"
+              label={t('admin.patients.medical_notes')}
               name="notes"
               value={formData.notes}
               onChange={handleChange}
-              placeholder="Any medical conditions, allergies, etc."
+              placeholder={t('admin.patients.medical_notes')}
             />
           </Grid>
           <Grid item xs={12} sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2, mb: 1 }}>
@@ -194,7 +196,7 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               disabled={loading}
               sx={{ minWidth: 120 }}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button
               type="submit"
@@ -204,7 +206,7 @@ const ProfileForm = ({ profile, onSave, onCancel, loading, error }) => {
               disabled={loading}
               sx={{ minWidth: 150 }}
             >
-              Save Changes
+              {t('common.save_changes')}
             </Button>
           </Grid>
         </Grid>

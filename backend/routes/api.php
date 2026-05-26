@@ -5,11 +5,13 @@ use App\Http\Controllers\Api\Admin\AdminDoctorController;
 use App\Http\Controllers\Api\Admin\AdminDoctorScheduleController;
 use App\Http\Controllers\Api\Admin\AdminMedicalServiceController;
 use App\Http\Controllers\Api\Admin\AdminPatientController;
+use App\Http\Controllers\Api\Admin\AdminProfileController;
 use App\Http\Controllers\Api\Admin\AdminSpecializationController;
 use App\Http\Controllers\Api\Admin\AdminUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DepartmentController;
 use App\Http\Controllers\Api\DoctorController;
+use App\Http\Controllers\Api\DoctorProfileController;
 use App\Http\Controllers\Api\DoctorScheduleController;
 use App\Http\Controllers\Api\MedicalServiceController;
 use App\Http\Controllers\Api\Patient\PatientProfileController;
@@ -27,11 +29,19 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/patient/profile', [PatientProfileController::class, 'show']);
     Route::put('/patient/profile', [PatientProfileController::class, 'update']);
 
+    // Doctor Profile
+    Route::get('/doctor/profile', [DoctorProfileController::class, 'show']);
+    Route::put('/doctor/profile', [DoctorProfileController::class, 'update']);
+
     // Doctor Schedule
     Route::get('/doctor/schedule', [DoctorScheduleController::class, 'index']);
 
     // Admin Routes
     Route::middleware('admin')->prefix('admin')->group(function () {
+        // Profile
+        Route::get('profile', [AdminProfileController::class, 'show']);
+        Route::put('profile', [AdminProfileController::class, 'update']);
+
         // Departments
         Route::apiResource('departments', AdminDepartmentController::class);
 

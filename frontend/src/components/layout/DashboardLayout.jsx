@@ -12,11 +12,13 @@ import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import UserMenu from './UserMenu';
 import { navigationItemsByRole } from './navigationConfig.jsx';
+import { useTranslation } from 'react-i18next';
 
 const drawerWidth = 280;
 
 const DashboardLayout = ({ children }) => {
   const { user, logout } = useAuth();
+  const { t } = useTranslation();
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -44,7 +46,9 @@ const DashboardLayout = ({ children }) => {
 
   const role = user?.role?.toLowerCase() || 'patient';
   const navigationItems = navigationItemsByRole[role] || navigationItemsByRole.patient;
-  const pageTitle = navigationItems.find(item => item.path === location.pathname)?.text || 'Dashboard';
+  
+  const currentNavItem = navigationItems.find(item => item.path === location.pathname);
+  const pageTitle = currentNavItem ? t(currentNavItem.text) : 'Dashboard';
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh', backgroundColor: 'background.default' }}>

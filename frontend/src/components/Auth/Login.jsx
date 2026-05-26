@@ -19,10 +19,13 @@ import {
   VisibilityOff,
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 
 const Login = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,7 +50,7 @@ const Login = () => {
       const role = data.user.role?.toLowerCase() || 'patient';
       navigate(`/${role}/dashboard`);
     } catch (err) {
-      const errorMessage = err.response?.data?.message || err.message || 'Login failed';
+      const errorMessage = err.response?.data?.message || err.message || t('auth.login_failed');
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -59,11 +62,15 @@ const Login = () => {
       sx={{
         minHeight: '100vh',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         background: 'linear-gradient(135deg, #e0f2f1 0%, #e8f5e9 100%)',
         py: 8,
       }}
     >
+      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', px: 4, mb: 2 }}>
+        <LanguageSwitcher />
+      </Box>
       <Container component="main" maxWidth="xs">
         <Fade in={true} timeout={800}>
           <Paper
@@ -94,10 +101,10 @@ const Login = () => {
             </Avatar>
             
             <Typography component="h1" variant="h4" fontWeight="700" color="text.primary" gutterBottom>
-              Welcome back
+              {t('auth.welcome_back')}
             </Typography>
             <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 4 }}>
-              Sign in to manage your appointments and health records
+              {t('auth.login_subtitle')}
             </Typography>
             
             {error && (
@@ -120,7 +127,7 @@ const Login = () => {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label={t('auth.email')}
                 name="email"
                 autoComplete="email"
                 autoFocus
@@ -132,7 +139,7 @@ const Login = () => {
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label={t('auth.password')}
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="current-password"
@@ -169,11 +176,11 @@ const Login = () => {
                   boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
                 }}
               >
-                {loading ? 'Signing In...' : 'Sign In'}
+                {loading ? t('auth.signing_in') : t('auth.sign_in')}
               </Button>
               <Box sx={{ textAlign: 'center', mt: 1 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Don't have an account?{' '}
+                  {t('auth.no_account')}{' '}
                   <Link 
                     component={RouterLink} 
                     to="/register" 
@@ -184,7 +191,7 @@ const Login = () => {
                       '&:hover': { textDecoration: 'underline' }
                     }}
                   >
-                    Sign Up
+                    {t('auth.sign_up')}
                   </Link>
                 </Typography>
               </Box>

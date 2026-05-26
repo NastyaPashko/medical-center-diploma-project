@@ -20,10 +20,13 @@ import {
   VisibilityOff,
 } from '@mui/icons-material';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 
 const Register = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const { register } = useAuth();
   const [formData, setFormData] = useState({
     name: '',
@@ -64,7 +67,7 @@ const Register = () => {
         const firstError = Object.values(err.response.data.errors)[0][0];
         setError(firstError);
       } else {
-        setError(err.response?.data?.message || err.message || 'Registration failed');
+        setError(err.response?.data?.message || err.message || t('auth.registration_failed'));
       }
     } finally {
       setLoading(false);
@@ -76,11 +79,15 @@ const Register = () => {
       sx={{
         minHeight: '100vh',
         display: 'flex',
+        flexDirection: 'column',
         alignItems: 'center',
         background: 'linear-gradient(135deg, #e0f2f1 0%, #e8f5e9 100%)',
         py: 8,
       }}
     >
+      <Box sx={{ width: '100%', display: 'flex', justifyContent: 'flex-end', px: 4, mb: 2 }}>
+        <LanguageSwitcher />
+      </Box>
       <Container component="main" maxWidth="xs">
         <Fade in={true} timeout={800}>
           <Paper
@@ -111,10 +118,10 @@ const Register = () => {
             </Avatar>
             
             <Typography component="h1" variant="h4" fontWeight="700" color="text.primary" gutterBottom>
-              Create account
+              {t('auth.create_account')}
             </Typography>
             <Typography variant="body2" color="text.secondary" align="center" sx={{ mb: 4 }}>
-              Sign up to book appointments and manage your medical visits
+              {t('auth.register_subtitle')}
             </Typography>
 
             {error && (
@@ -137,7 +144,7 @@ const Register = () => {
                 required
                 fullWidth
                 id="name"
-                label="Full Name"
+                label={t('auth.full_name')}
                 name="name"
                 autoComplete="name"
                 autoFocus
@@ -149,7 +156,7 @@ const Register = () => {
                 required
                 fullWidth
                 id="email"
-                label="Email Address"
+                label={t('auth.email')}
                 name="email"
                 autoComplete="email"
                 value={formData.email}
@@ -159,7 +166,7 @@ const Register = () => {
               <TextField
                 fullWidth
                 id="phone"
-                label="Phone Number"
+                label={t('auth.phone')}
                 name="phone"
                 autoComplete="tel"
                 value={formData.phone}
@@ -170,7 +177,7 @@ const Register = () => {
                 required
                 fullWidth
                 name="password"
-                label="Password"
+                label={t('auth.password')}
                 type={showPassword ? 'text' : 'password'}
                 id="password"
                 autoComplete="new-password"
@@ -195,7 +202,7 @@ const Register = () => {
                 required
                 fullWidth
                 name="password_confirmation"
-                label="Confirm Password"
+                label={t('auth.confirm_password')}
                 type="password"
                 id="password_confirmation"
                 autoComplete="new-password"
@@ -219,11 +226,11 @@ const Register = () => {
                   boxShadow: '0 4px 12px rgba(25, 118, 210, 0.3)',
                 }}
               >
-                {loading ? 'Creating Account...' : 'Sign Up'}
+                {loading ? t('auth.signing_up') : t('auth.sign_up')}
               </Button>
               <Box sx={{ textAlign: 'center', mt: 1 }}>
                 <Typography variant="body2" color="text.secondary">
-                  Already have an account?{' '}
+                  {t('auth.have_account')}{' '}
                   <Link 
                     component={RouterLink} 
                     to="/login" 
@@ -234,7 +241,7 @@ const Register = () => {
                       '&:hover': { textDecoration: 'underline' }
                     }}
                   >
-                    Sign In
+                    {t('auth.login')}
                   </Link>
                 </Typography>
               </Box>

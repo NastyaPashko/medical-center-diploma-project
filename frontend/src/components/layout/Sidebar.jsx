@@ -18,6 +18,7 @@ import {
   Person as PersonIcon,
 } from '@mui/icons-material';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Sidebar = ({
   drawerWidth,
@@ -28,6 +29,7 @@ const Sidebar = ({
   navigationItems,
 }) => {
   const location = useLocation();
+  const { t } = useTranslation();
 
   const drawerContent = (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -81,7 +83,7 @@ const Sidebar = ({
                   {item.icon}
                 </ListItemIcon>
                 <ListItemText
-                  primary={item.text}
+                  primary={t(item.text)}
                   primaryTypographyProps={{
                     fontSize: '0.9rem',
                     fontWeight: isActive ? 700 : 500,

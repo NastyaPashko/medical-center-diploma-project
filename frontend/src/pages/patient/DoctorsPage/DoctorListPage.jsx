@@ -19,10 +19,12 @@ import {
   Divider,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import patientApi from '../../../api/patientApi';
 
 const DoctorListPage = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [doctors, setDoctors] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [specializations, setSpecializations] = useState([]);
@@ -35,9 +37,14 @@ const DoctorListPage = () => {
     specialization_id: '',
   });
 
-  useEffect(() => {
-    fetchInitialData();
-  }, []);
+  const fetchSpecializations = async (deptId) => {
+    try {
+      const res = await patientApi.getSpecializations({ department_id: deptId });
+      setSpecializations(res.data);
+    } catch (err) {
+      console.error('Failed to fetch specializations', err);
+    }
+  };
 
   const fetchInitialData = async () => {
     try {
@@ -50,10 +57,14 @@ const DoctorListPage = () => {
       setDepartments(deptsRes.data);
       setLoading(false);
     } catch (err) {
-      setError('Failed to load doctors. Please try again later.');
+      setError(t('common.error') + ': Failed to load doctors.');
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchInitialData();
+  }, []);
 
   useEffect(() => {
     if (filters.department_id) {
@@ -62,15 +73,6 @@ const DoctorListPage = () => {
       setSpecializations([]);
     }
   }, [filters.department_id]);
-
-  const fetchSpecializations = async (deptId) => {
-    try {
-      const res = await patientApi.getSpecializations({ department_id: deptId });
-      setSpecializations(res.data);
-    } catch (err) {
-      console.error('Failed to fetch specializations', err);
-    }
-  };
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -88,7 +90,7 @@ const DoctorListPage = () => {
       setDoctors(res.data);
       setLoading(false);
     } catch (err) {
-      setError('Failed to filter doctors.');
+      setError(t('common.error') + ': Failed to filter doctors.');
       setLoading(false);
     }
   };
@@ -113,7 +115,7 @@ const DoctorListPage = () => {
   return (
     <Box>
       <Typography variant="h4" fontWeight="700" color="text.primary" gutterBottom sx={{ mb: 3 }}>
-        Find Doctors
+        {t('doctor.find_doctors')}
       </Typography>
 
       {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
@@ -123,7 +125,7 @@ const DoctorListPage = () => {
           <Grid item xs={12} md={3}>
             <TextField
               fullWidth
-              label="Search by Name"
+              label={t('doctor.search_by_name')}
               name="name"
               value={filters.name}
               onChange={handleFilterChange}
@@ -132,14 +134,14 @@ const DoctorListPage = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small">
-              <InputLabel>Department</InputLabel>
+              <InputLabel>{t('common.department')}</InputLabel>
               <Select
                 name="department_id"
                 value={filters.department_id}
-                label="Department"
+                label={t('common.department')}
                 onChange={handleFilterChange}
               >
-                <MenuItem value="">All Departments</MenuItem>
+                <MenuItem value="">{t('doctor.all_departments')}</MenuItem>
                 {departments.map((dept) => (
                   <MenuItem key={dept.id} value={dept.id}>{dept.name}</MenuItem>
                 ))}
@@ -148,14 +150,14 @@ const DoctorListPage = () => {
           </Grid>
           <Grid item xs={12} md={3}>
             <FormControl fullWidth size="small" disabled={!filters.department_id}>
-              <InputLabel>Specialization</InputLabel>
+              <InputLabel>{t('common.specialization')}</InputLabel>
               <Select
                 name="specialization_id"
                 value={filters.specialization_id}
-                label="Specialization"
+                label={t('common.specialization')}
                 onChange={handleFilterChange}
               >
-                <MenuItem value="">All Specializations</MenuItem>
+                <MenuItem value="">{t('doctor.all_specializations')}</MenuItem>
                 {specializations.map((spec) => (
                   <MenuItem key={spec.id} value={spec.id}>{spec.name}</MenuItem>
                 ))}
@@ -164,10 +166,10 @@ const DoctorListPage = () => {
           </Grid>
           <Grid item xs={12} md={3} sx={{ display: 'flex', gap: 1 }}>
             <Button variant="contained" onClick={handleSearch} fullWidth>
-              Search
+              {t('common.search')}
             </Button>
             <Button variant="outlined" onClick={handleClearFilters} fullWidth>
-              Clear
+              {t('common.clear')}
             </Button>
           </Grid>
         </Grid>
@@ -176,7 +178,7 @@ const DoctorListPage = () => {
       {doctors.length === 0 ? (
         <Paper sx={{ py: 10, textAlign: 'center' }}>
           <Typography variant="h6" color="text.secondary">
-            No doctors found matching your criteria.
+            {t('doctor.no_doctors_found')}
           </Typography>
         </Paper>
       ) : (
@@ -226,11 +228,11 @@ const DoctorListPage = () => {
                     mb: 2,
                     height: '4.5em'
                   }}>
-                    {doctor.bio || 'No biography provided.'}
+                    {doctor.bio || t('doctor.no_bio')}
                   </Typography>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 'auto' }}>
                     <Typography variant="subtitle2" color="primary.main">
-                      Exp: {doctor.experience_years} years
+                      {t('doctor.experience_years', { years: doctor.experience_years })}
                     </Typography>
                     <Typography variant="subtitle1" fontWeight="bold">
                       ${doctor.consultation_price}
@@ -242,7 +244,7 @@ const DoctorListPage = () => {
                     e.stopPropagation();
                     navigate(`/patient/doctors/${doctor.id}`);
                   }}>
-                    View Details
+                    {t('doctor.view_details')}
                   </Button>
                 </Box>
               </Card>

@@ -15,19 +15,22 @@ import {
   IconButton,
 } from '@mui/material';
 import { Refresh as RefreshIcon } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import doctorApi from '../../api/doctorApi';
 
-const WEEKDAYS = [
-  { value: 1, label: 'Monday' },
-  { value: 2, label: 'Tuesday' },
-  { value: 3, label: 'Wednesday' },
-  { value: 4, label: 'Thursday' },
-  { value: 5, label: 'Friday' },
-  { value: 6, label: 'Saturday' },
-  { value: 7, label: 'Sunday' },
-];
-
 const DoctorSchedulePage = () => {
+  const { t } = useTranslation();
+
+  const WEEKDAYS = [
+    { value: 1, label: t('weekdays.monday') },
+    { value: 2, label: t('weekdays.tuesday') },
+    { value: 3, label: t('weekdays.wednesday') },
+    { value: 4, label: t('weekdays.thursday') },
+    { value: 5, label: t('weekdays.friday') },
+    { value: 6, label: t('weekdays.saturday') },
+    { value: 7, label: t('weekdays.sunday') },
+  ];
+
   const [schedules, setSchedules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -39,7 +42,7 @@ const DoctorSchedulePage = () => {
       setSchedules(response.data || []);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch schedule data. Please try again later.');
+      setError(t('common.error') + ': Failed to fetch schedule data.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -66,7 +69,7 @@ const DoctorSchedulePage = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">My Working Schedule</Typography>
+        <Typography variant="h4">{t('doctor.working_schedule')}</Typography>
         <IconButton onClick={fetchSchedule} disabled={loading}>
           <RefreshIcon />
         </IconButton>
@@ -78,11 +81,11 @@ const DoctorSchedulePage = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Day of Week</TableCell>
-              <TableCell>Start Time</TableCell>
-              <TableCell>End Time</TableCell>
-              <TableCell>Slot Duration</TableCell>
-              <TableCell>Status</TableCell>
+              <TableCell>{t('doctor.weekday')}</TableCell>
+              <TableCell>{t('doctor.start_time')}</TableCell>
+              <TableCell>{t('doctor.end_time')}</TableCell>
+              <TableCell>{t('doctor.slot_duration')}</TableCell>
+              <TableCell>{t('common.status')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -90,7 +93,7 @@ const DoctorSchedulePage = () => {
               <TableRow>
                 <TableCell colSpan={5} align="center">
                   <Typography variant="body1" sx={{ py: 3 }}>
-                    No schedule entries found.
+                    {t('common.no_data')}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -109,11 +112,11 @@ const DoctorSchedulePage = () => {
                     {schedule.end_time.substring(0, 5)}
                   </TableCell>
                   <TableCell>
-                    {schedule.slot_duration_minutes} minutes
+                    {t('doctor.slot_duration_minutes', { count: schedule.slot_duration_minutes })}
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={schedule.is_active ? 'Active' : 'Inactive'}
+                      label={schedule.is_active ? t('common.active') : t('common.inactive')}
                       color={schedule.is_active ? 'success' : 'default'}
                       size="small"
                     />

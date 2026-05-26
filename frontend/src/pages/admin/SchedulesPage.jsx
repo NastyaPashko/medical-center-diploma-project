@@ -34,20 +34,23 @@ import {
   Delete as DeleteIcon,
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 import adminApi from '../../api/adminApi';
 import ConfirmDialog from '../../components/common/ConfirmDialog';
 
-const WEEKDAYS = [
-  { value: 1, label: 'Monday' },
-  { value: 2, label: 'Tuesday' },
-  { value: 3, label: 'Wednesday' },
-  { value: 4, label: 'Thursday' },
-  { value: 5, label: 'Friday' },
-  { value: 6, label: 'Saturday' },
-  { value: 7, label: 'Sunday' },
-];
-
 const AdminSchedulesPage = () => {
+  const { t } = useTranslation();
+
+  const WEEKDAYS = [
+    { value: 1, label: t('weekdays.monday') },
+    { value: 2, label: t('weekdays.tuesday') },
+    { value: 3, label: t('weekdays.wednesday') },
+    { value: 4, label: t('weekdays.thursday') },
+    { value: 5, label: t('weekdays.friday') },
+    { value: 6, label: t('weekdays.saturday') },
+    { value: 7, label: t('weekdays.sunday') },
+  ];
+
   const [schedules, setSchedules] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,7 +84,7 @@ const AdminSchedulesPage = () => {
       setDoctors(docRes.data || []);
       setError(null);
     } catch (err) {
-      setError('Failed to fetch data');
+      setError(t('common.error') + ': Failed to fetch data');
       console.error(err);
     } finally {
       setLoading(false);
@@ -151,10 +154,10 @@ const AdminSchedulesPage = () => {
     try {
       if (editingSchedule) {
         await adminApi.updateSchedule(editingSchedule.id, formData);
-        setSuccess('Schedule updated successfully');
+        setSuccess(t('doctor.schedule_updated'));
       } else {
         await adminApi.createSchedule(formData);
-        setSuccess('Schedule created successfully');
+        setSuccess(t('doctor.schedule_created'));
       }
       handleClose();
       fetchData();
@@ -162,7 +165,7 @@ const AdminSchedulesPage = () => {
       if (err.response?.data?.errors) {
         setValidationErrors(err.response.data.errors);
       } else {
-        setError(err.response?.data?.message || 'Failed to save schedule');
+        setError(t('common.error') + ': Failed to save schedule');
       }
     } finally {
       setSubmitting(false);
@@ -177,10 +180,10 @@ const AdminSchedulesPage = () => {
   const handleDeleteConfirm = async () => {
     try {
       await adminApi.deleteSchedule(scheduleToDelete.id);
-      setSuccess('Schedule deleted successfully');
+      setSuccess(t('doctor.schedule_deleted'));
       fetchData();
     } catch (err) {
-      setError('Failed to delete schedule');
+      setError(t('common.error') + ': Failed to delete schedule');
     } finally {
       setConfirmOpen(false);
       setScheduleToDelete(null);
@@ -203,7 +206,7 @@ const AdminSchedulesPage = () => {
   return (
     <Box>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
-        <Typography variant="h4">Doctor Schedules</Typography>
+        <Typography variant="h4" fontWeight="700">{t('doctor.manage_schedules')}</Typography>
         <Box>
           <IconButton onClick={fetchData} sx={{ mr: 1 }}>
             <RefreshIcon />
@@ -213,7 +216,7 @@ const AdminSchedulesPage = () => {
             startIcon={<AddIcon />}
             onClick={() => handleOpen()}
           >
-            Add Schedule
+            {t('doctor.add_schedule')}
           </Button>
         </Box>
       </Box>
@@ -225,13 +228,11 @@ const AdminSchedulesPage = () => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>Doctor</TableCell>
-              <TableCell>Department / Specialization</TableCell>
-              <TableCell>Day</TableCell>
-              <TableCell>Time</TableCell>
-              <TableCell>Slot (min)</TableCell>
-              <TableCell>Status</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              <TableCell>{t('common.name')}</TableCell>
+              <TableCell>{t('common.department')} / {t('common.specialization')}</TableCell>
+              <TableCell>{t('doctor.weekday')}</TableCell>
+              <TableCell>{t('common.status')}</TableCell>
+              <TableCell align="right">{t('common.actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -239,7 +240,7 @@ const AdminSchedulesPage = () => {
               <TableRow>
                 <TableCell colSpan={7} align="center">
                   <Typography variant="body1" sx={{ py: 3 }}>
-                    No schedules found.
+                    {t('common.no_data')}
                   </Typography>
                 </TableCell>
               </TableRow>
@@ -263,21 +264,21 @@ const AdminSchedulesPage = () => {
                   <TableCell>
                     {schedule.start_time.substring(0, 5)} - {schedule.end_time.substring(0, 5)}
                   </TableCell>
-                  <TableCell>{schedule.slot_duration_minutes}</TableCell>
+                  <TableCell>{t('doctor.slot_duration_minutes', { count: schedule.slot_duration_minutes })}</TableCell>
                   <TableCell>
                     <Chip
-                      label={schedule.is_active ? 'Active' : 'Inactive'}
+                      label={schedule.is_active ? t('common.active') : t('common.inactive')}
                       color={schedule.is_active ? 'success' : 'default'}
                       size="small"
                     />
                   </TableCell>
                   <TableCell align="right">
-                    <Tooltip title="Edit">
+                    <Tooltip title={t('common.edit')}>
                       <IconButton onClick={() => handleOpen(schedule)} size="small">
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Delete">
+                    <Tooltip title={t('common.delete')}>
                       <IconButton onClick={() => handleDeleteClick(schedule)} size="small" color="error">
                         <DeleteIcon />
                       </IconButton>
@@ -291,17 +292,17 @@ const AdminSchedulesPage = () => {
       </TableContainer>
 
       <Dialog open={open} onClose={handleClose} maxWidth="sm" fullWidth>
-        <DialogTitle>{editingSchedule ? 'Edit Schedule' : 'Add New Schedule'}</DialogTitle>
+        <DialogTitle fontWeight="bold">{editingSchedule ? t('doctor.edit_schedule') : t('doctor.add_schedule')}</DialogTitle>
         <form onSubmit={handleSubmit}>
           <DialogContent>
             <Grid container spacing={2} sx={{ mt: 0.5 }}>
               <Grid item xs={12}>
                 <FormControl fullWidth required error={!!validationErrors.doctor_profile_id}>
-                  <InputLabel>Doctor</InputLabel>
+                  <InputLabel>{t('doctor.select_doctor')}</InputLabel>
                   <Select
                     name="doctor_profile_id"
                     value={formData.doctor_profile_id}
-                    label="Doctor"
+                    label={t('doctor.select_doctor')}
                     onChange={handleChange}
                     disabled={!!editingSchedule}
                   >
@@ -320,11 +321,11 @@ const AdminSchedulesPage = () => {
               </Grid>
               <Grid item xs={12} sm={6}>
                 <FormControl fullWidth required error={!!validationErrors.day_of_week}>
-                  <InputLabel>Day of Week</InputLabel>
+                  <InputLabel>{t('doctor.weekday')}</InputLabel>
                   <Select
                     name="day_of_week"
                     value={formData.day_of_week}
-                    label="Day of Week"
+                    label={t('doctor.weekday')}
                     onChange={handleChange}
                   >
                     {WEEKDAYS.map((day) => (
@@ -343,7 +344,7 @@ const AdminSchedulesPage = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Slot Duration (min)"
+                  label={t('doctor.slot_duration')}
                   name="slot_duration_minutes"
                   type="number"
                   value={formData.slot_duration_minutes}
@@ -357,7 +358,7 @@ const AdminSchedulesPage = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="Start Time"
+                  label={t('doctor.start_time')}
                   name="start_time"
                   type="time"
                   value={formData.start_time}
@@ -372,7 +373,7 @@ const AdminSchedulesPage = () => {
               <Grid item xs={12} sm={6}>
                 <TextField
                   fullWidth
-                  label="End Time"
+                  label={t('doctor.end_time')}
                   name="end_time"
                   type="time"
                   value={formData.end_time}
@@ -394,19 +395,19 @@ const AdminSchedulesPage = () => {
                       color="primary"
                     />
                   }
-                  label="Active"
+                  label={t('common.status') + ': ' + (formData.is_active ? t('common.active') : t('common.inactive'))}
                 />
               </Grid>
             </Grid>
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
+            <Button onClick={handleClose} color="inherit">{t('common.cancel')}</Button>
             <Button
               type="submit"
               variant="contained"
               disabled={submitting}
             >
-              {submitting ? <CircularProgress size={24} /> : 'Save'}
+              {submitting ? <CircularProgress size={24} /> : t('common.save')}
             </Button>
           </DialogActions>
         </form>
@@ -414,8 +415,8 @@ const AdminSchedulesPage = () => {
 
       <ConfirmDialog
         open={confirmOpen}
-        title="Delete Schedule"
-        message="Are you sure you want to delete this schedule? This action cannot be undone."
+        title={t('doctor.delete_schedule')}
+        message={t('doctor.confirm_delete_schedule')}
         onConfirm={handleDeleteConfirm}
         onCancel={() => setConfirmOpen(false)}
       />

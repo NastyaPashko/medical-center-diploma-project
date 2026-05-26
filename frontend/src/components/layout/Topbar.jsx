@@ -9,6 +9,7 @@ import {
   Avatar,
 } from '@mui/material';
 import { Menu as MenuIcon } from '@mui/icons-material';
+import LanguageSwitcher from '../common/LanguageSwitcher';
 
 const Topbar = ({ drawerWidth, onDrawerToggle, user, onMenuOpen, pageTitle }) => {
   return (
@@ -43,6 +44,7 @@ const Topbar = ({ drawerWidth, onDrawerToggle, user, onMenuOpen, pageTitle }) =>
         </Box>
 
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <LanguageSwitcher />
           <Tooltip title="Account settings">
             <IconButton
               onClick={onMenuOpen}

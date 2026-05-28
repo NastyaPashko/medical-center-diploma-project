@@ -18,12 +18,26 @@ class DoctorScheduleRepository
             $query->where('is_active', $filters['is_active']);
         }
 
+        if (!empty($filters['department_id'])) {
+            $query->whereHas('doctorProfile', function($q) use ($filters) {
+                $q->where('department_id', $filters['department_id']);
+            });
+        }
+
+        // Default sorting
+        $query->join('doctor_profiles', 'doctor_schedules.doctor_profile_id', '=', 'doctor_profiles.id')
+            ->join('users', 'doctor_profiles.user_id', '=', 'users.id')
+            ->orderBy('users.name')
+            ->orderBy('doctor_schedules.day_of_week')
+            ->orderBy('doctor_schedules.start_time')
+            ->select('doctor_schedules.*');
+
         return $query->get();
     }
 
     public function findById(int $id): ?DoctorSchedule
     {
-        return DoctorSchedule::with(['doctorProfile.user', 'doctorProfile.department', 'doctorProfile.specialization'])->find($id);
+        return DoctorSchedule::query()->with(['doctorProfile.user', 'doctorProfile.department', 'doctorProfile.specialization'])->find($id);
     }
 
     public function create(array $data): DoctorSchedule

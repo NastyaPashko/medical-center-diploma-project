@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Admin\AdminDepartmentController;
+use App\Http\Controllers\Api\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\Admin\AdminDoctorController;
 use App\Http\Controllers\Api\Admin\AdminDoctorScheduleController;
 use App\Http\Controllers\Api\Admin\AdminMedicalServiceController;
@@ -38,6 +39,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Admin Routes
     Route::middleware('admin')->prefix('admin')->group(function () {
+        // Dashboard
+        Route::get('dashboard', [AdminDashboardController::class, 'index']);
+
         // Profile
         Route::get('profile', [AdminProfileController::class, 'show']);
         Route::put('profile', [AdminProfileController::class, 'update']);

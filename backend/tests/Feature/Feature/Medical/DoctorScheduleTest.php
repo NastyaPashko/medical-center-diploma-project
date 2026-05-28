@@ -133,7 +133,8 @@ class DoctorScheduleTest extends TestCase
             'day_of_week' => 1,
             'start_time' => '09:00',
             'end_time' => '17:00',
-            'slot_duration_minutes' => 30
+            'slot_duration_minutes' => 30,
+            'is_active' => true
         ];
 
         $response = $this->actingAs($this->admin)->postJson('/api/admin/schedules', $data);

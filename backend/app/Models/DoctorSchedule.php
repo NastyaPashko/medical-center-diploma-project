@@ -17,6 +17,7 @@ class DoctorSchedule extends Model
 
     protected $casts = [
         'is_active' => 'boolean',
+        'doctor_profile_id' => 'integer',
         'day_of_week' => 'integer',
         'slot_duration_minutes' => 'integer',
     ];

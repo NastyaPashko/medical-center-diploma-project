@@ -37,7 +37,8 @@ class DoctorScheduleService
             throw new \Exception('Schedule not found');
         }
 
-        $this->validateBusinessRules($data, $id);
+        $mergedData = array_merge($schedule->toArray(), $data);
+        $this->validateBusinessRules($mergedData, $id);
         return $this->doctorScheduleRepository->update($schedule, $data);
     }
 
@@ -51,9 +52,9 @@ class DoctorScheduleService
             ]);
         }
 
-        if (!$doctor->is_available) {
+        if (($data['is_active'] ?? false) && !$doctor->is_available) {
             throw ValidationException::withMessages([
-                'doctor_profile_id' => ['Cannot create schedule for unavailable doctor.'],
+                'doctor_profile_id' => ['Cannot create active schedule for unavailable doctor.'],
             ]);
         }
 

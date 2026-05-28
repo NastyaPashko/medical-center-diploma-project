@@ -17,7 +17,7 @@ class DoctorScheduleResource extends JsonResource
         return [
             'id' => $this->id,
             'doctor_profile_id' => $this->doctor_profile_id,
-            'doctor' => new DoctorResource($this->whenLoaded('doctorProfile')),
+            'doctor' => new DoctorResource($this->doctorProfile),
             'day_of_week' => $this->day_of_week,
             'start_time' => $this->start_time,
             'end_time' => $this->end_time,

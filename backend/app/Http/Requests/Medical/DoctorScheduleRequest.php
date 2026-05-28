@@ -30,13 +30,7 @@ class DoctorScheduleRequest extends FormRequest
             'slot_duration_minutes' => [
                 'required',
                 'integer',
-                'min:10',
-                'max:120',
-                function ($attribute, $value, $fail) {
-                    if ($value % 5 !== 0) {
-                        $fail('The ' . $attribute . ' must be divisible by 5.');
-                    }
-                },
+                'in:15,30,45,60',
             ],
             'is_active' => 'boolean',
         ];
